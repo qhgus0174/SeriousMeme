@@ -1,13 +1,17 @@
 {
+    "root": true,
+    "parser": "babel-eslint",
+    "extends": ["eslint:recommended", "prettier", "plugin:prettier/recommended"],
+    "plugins": ["react", "prettier"],
+    "ignorePatterns": ["node_modules/"],
     "env": {
         "browser": true,
-        "node": true,
-        "es2020": true
+        "node": true
     },
-    "extends": ["eslint:recommended", "prettier"],
     "parserOptions": {
-        "ecmaVersion": 11,
         "sourceType": "module"
     },
-    "rules": {}
+    "rules": {
+        "no-unused-vars": "off"
+    }
 }
