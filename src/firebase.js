@@ -2,12 +2,12 @@ import { initializeApp } from 'firebase/app';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: 'AIzaSyBIYVNLdYKiEO1kMY8spVrmPJnufoCrQcc',
-    authDomain: 'seriousmeme-eab4a.firebaseapp.com',
-    projectId: 'seriousmeme-eab4a',
-    storageBucket: 'seriousmeme-eab4a.appspot.com',
-    messagingSenderId: '885220602393',
-    appId: '1:885220602393:web:c80688c409dfeb2a0fb088',
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGIN_ID,
+    appId: process.env.REACT_APP_APP_ID,
 };
 
 // Initialize Firebase
