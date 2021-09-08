@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth'; //Auth 사용
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -10,5 +11,6 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_APP_ID,
 };
 
-// Initialize Firebase
-export default initializeApp(firebaseConfig);
+initializeApp(firebaseConfig); //firebase init
+
+export const authService = getAuth(); //인증 서비스 가져오기
