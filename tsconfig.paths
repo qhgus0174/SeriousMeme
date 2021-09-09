@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "baseUrl": "src",
+        "jsxImportSource": "@emotion/react",
 
         "paths": {
             "~components/*": ["components/*"]

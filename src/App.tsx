@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import AppRouter from '~components/Router';
+import AppRouter from 'Router';
 import { fbAuthService, fbAuth } from 'fbInstance';
+import { GlobalStyle } from 'global-styles';
 
 const App = () => {
     //currentUser : 로그인 안 했으면 null 값임
@@ -18,6 +19,12 @@ const App = () => {
         });
     }, []);
 
-    return <>{init ? <AppRouter isLoggedIn={isLoggedIn} /> : 'Initializing...'}</>;
+    return (
+        <>
+            <GlobalStyle />
+            <AppRouter />
+            {/* {init ? <AppRouter isLoggedIn={isLoggedIn} /> : 'Initializing...'} */}
+        </>
+    );
 };
 export default App;

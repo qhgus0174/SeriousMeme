@@ -1,9 +1,6 @@
 import { fbAuthService, fbAuth } from 'fbInstance';
 import React, { useState } from 'react';
-import tw from 'twin.macro';
 import styled from '@emotion/styled/macro';
-
-const CustomButton = styled.button([tw`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`]);
 
 const Auth = () => {
     const [email, setEmail] = useState('');
@@ -51,13 +48,27 @@ const Auth = () => {
     return (
         <div>
             <form onSubmit={onSubmit}>
-                <input onChange={onChangeLoginInput} type="text" name="email" placeholder="Email" required value={email} />
-                <input onChange={onChangeLoginInput} type="password" name="password" placeholder="Password" required value={password} />
+                <input
+                    onChange={onChangeLoginInput}
+                    type="text"
+                    name="email"
+                    placeholder="Email"
+                    required
+                    value={email}
+                />
+                <input
+                    onChange={onChangeLoginInput}
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    value={password}
+                />
                 <input value={newAccount ? 'Create Account' : 'Log In'} type="submit" />
                 <span onClick={toggleAccount}></span>
             </form>
             <div>
-                <CustomButton onClick={() => onClickLoginSns}>Continue with Google</CustomButton>
+                <button onClick={() => onClickLoginSns}>Continue with Google</button>
                 <button onClick={() => onClickLoginSns}>Continue with Github</button>
             </div>
         </div>
