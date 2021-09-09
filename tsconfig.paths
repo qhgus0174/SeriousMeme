@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "baseUrl": "src",
+
+        "paths": {
+            "~components/*": ["components/*"]
+        },
+
+        "removeComments": true,
+        "target": "es6",
+        "sourceMap": true,
+
+        "strict": true,
+
+        "noEmitOnError": true,
+        "skipLibCheck": true,
+
+        "jsx": "react",
+        "module": "commonjs",
+        "outDir": "./dist",
+
+        "esModuleInterop": true,
+
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+
+        "noEmit": true
+    }
+}
