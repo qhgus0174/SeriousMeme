@@ -1,7 +1,7 @@
 {
+    "parser": "@typescript-eslint/parser",
     "root": true,
-    "parser": "babel-eslint",
-    "extends": ["eslint:recommended", "prettier", "plugin:prettier/recommended"],
+    "extends": ["eslint:recommended", "plugin:@typescript-eslint/eslint-recommended", "plugin:@typescript-eslint/recommended", "prettier", "plugin:prettier/recommended"],
     "plugins": ["react", "prettier"],
     "ignorePatterns": ["node_modules/"],
     "env": {
@@ -9,9 +9,15 @@
         "node": true
     },
     "parserOptions": {
-        "sourceType": "module"
+        "ecmaVersion": 6,
+        "ecmaFeatures": {
+            "jsx": true
+        }
     },
     "rules": {
-        "no-unused-vars": "off"
+        "react/jsx-uses-vars": "error",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-var-requires": "off"
     }
 }
