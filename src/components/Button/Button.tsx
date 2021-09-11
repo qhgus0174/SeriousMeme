@@ -2,7 +2,7 @@ import React from 'react';
 import styled from '@emotion/styled';
 
 interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    icon?: React.SVGAttributes<SVGElement>;
+    icon?: JSX.Element;
     color?: IColor.color;
 }
 
@@ -12,15 +12,16 @@ enum IColor {
 
 const Button = ({ children, icon, color, ...rest }: IButtonProps) => {
     return (
-        <div>
-            <CustomButton color={color} onClick={rest.onClick} type="button">
-                {children}
-            </CustomButton>
-        </div>
+        <>
+            <BasicButton color={color} icon={icon} onClick={rest.onClick} type="button">
+                {icon}
+                <span>{children}</span>
+            </BasicButton>
+        </>
     );
 };
 
-const handleColor = (color?: IColor) => {
+const handleButtonColor = (color?: IColor) => {
     switch (color) {
         case 'darkblue':
             return '#004ecb';
@@ -29,16 +30,26 @@ const handleColor = (color?: IColor) => {
     }
 };
 
-const CustomButton = styled.button<IButtonProps>`
+const BasicButton = styled.button<IButtonProps>`
     box-sizing: border-box;
     border: none;
     outline: 0;
     text-align: center;
     padding: 7px 16px;
-    background: ${props => handleColor(props.color)};
+    background: ${props => handleButtonColor(props.color)};
     color: white;
     border-radius: 10px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin: 0.5rem;
+
+    svg {
+        align-items: center;
+    }
+    span {
+        margin-left: ${props => (props.icon ? 0.5 : 0)}em;
+    }
 `;
 
 export default Button;
