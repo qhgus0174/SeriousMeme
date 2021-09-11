@@ -5,13 +5,14 @@ interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> {
     width?: string;
 }
 
-const Text = ({ width, ...rest }: ITextProps) => {
+const TextBox = ({ width, ...rest }: ITextProps) => {
     return <CustomInput type="text" placeholder={rest.placeholder} onClick={rest.onClick} />;
 };
 
 const CustomInput = styled.input<ITextProps>`
-    width: ${props => (props.width ? props.width : '80')}%;
+    width: ${props => (props.width ? props.width : '100')}%;
     padding: 10px;
+    box-sizing: border-box;
 `;
 
-export default Text;
+export default TextBox;
