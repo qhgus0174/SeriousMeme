@@ -4,7 +4,8 @@
         "jsxImportSource": "@emotion/react",
 
         "paths": {
-            "~components/*": ["components/*"]
+            "~components/*": ["components/*"],
+            "~assets/*": ["assets/*"]
         },
 
         "removeComments": true,
