@@ -9,6 +9,7 @@ const BasicModal = ({ children, options }: IModal) => {
             {options.visible ? (
                 <>
                     <ModalWrapper
+                        className="modalWrapper"
                         tabIndex={-1}
                         options={options}
                         onClick={() => {
@@ -16,6 +17,7 @@ const BasicModal = ({ children, options }: IModal) => {
                         }}
                     >
                         <ModalInner
+                            className="modalInner"
                             tabIndex={0}
                             options={options}
                             onClick={(e: React.MouseEvent) => {
@@ -23,8 +25,8 @@ const BasicModal = ({ children, options }: IModal) => {
                             }}
                         >
                             {options.headerTitle && <ModalHeader>{options.headerTitle}</ModalHeader>}
-                            <ModalBody>
-                                <ModalContent>{children}</ModalContent>
+                            <ModalBody className="modalBody">
+                                <ModalContent className="modalContent">{children}</ModalContent>
                             </ModalBody>
                         </ModalInner>
                     </ModalWrapper>

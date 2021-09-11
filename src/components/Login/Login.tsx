@@ -1,9 +1,9 @@
 import { fbAuthService, fbAuth } from 'fbInstance';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
-import Text from '~components/Input/Text';
+import TextBox from '~components/Input/TextBox';
 import Button from '~components/Button/Button';
-import GitHubIcon from '@material-ui/icons/GitHub';
+import SvgIcon from '~components/Icon/SvgIcon';
 
 const Auth = () => {
     const [email, setEmail] = useState('');
@@ -22,7 +22,6 @@ const Auth = () => {
     };
 
     const onSubmit = async (event: React.FormEvent) => {
-        console.log('ab');
         event.preventDefault();
         let data;
         try {
@@ -40,7 +39,6 @@ const Auth = () => {
     };
 
     const onClickLoginSns = (event: React.MouseEvent<HTMLFormElement>) => {
-        console.log('hi');
         event.preventDefault();
     };
 
@@ -49,10 +47,11 @@ const Auth = () => {
     };
 
     return (
-        <LoginContainer>
+        <LoginContainer className="loginContainer">
             <form onSubmit={onSubmit}>
-                <LoginContent>
-                    <Text
+                <LoginContent className="loginContent">
+                    <TextBox
+                        className="textBox"
                         onChange={onChangeLoginInput}
                         type="text"
                         name="email"
@@ -60,7 +59,8 @@ const Auth = () => {
                         required
                         value={email}
                     />
-                    <Text
+                    <TextBox
+                        className="textBox"
                         onChange={onChangeLoginInput}
                         type="password"
                         name="password"
@@ -72,11 +72,13 @@ const Auth = () => {
                     <span onClick={toggleAccount}></span>
                 </LoginContent>
             </form>
-            <LoginButtonContainer>
-                <Button icon={<GitHubIcon />} onClick={() => onClickLoginSns}>
+            <LoginButtonContainer className="loginButtonContainer">
+                <Button className="button" icon={<SvgIcon shape="googleLogo" />} onClick={() => onClickLoginSns}>
                     Continue with Google
                 </Button>
-                <Button onClick={() => onClickLoginSns}>Continue with Github</Button>
+                <Button className="button" icon={<SvgIcon shape="github" />} onClick={() => onClickLoginSns}>
+                    Continue with Github
+                </Button>
             </LoginButtonContainer>
         </LoginContainer>
     );
@@ -97,6 +99,6 @@ const LoginContent = styled.div`
 const LoginButtonContainer = styled.div`
     display: flex;
     justify-content: center;
-    padding: 1em;
+    padding-top: 1em;
 `;
 export default Auth;
