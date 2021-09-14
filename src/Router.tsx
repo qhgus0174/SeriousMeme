@@ -12,7 +12,7 @@ const AppRouter = () => {
     return (
         <Router>
             <Header />
-            {init && <Spinner />}
+            {!init && <Spinner />}
             <Route exact path="/" component={Main} />
         </Router>
     );

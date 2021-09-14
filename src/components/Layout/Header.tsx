@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Button from '~components/Button/Button';
 import styled from '@emotion/styled';
 import ModalPortal from '~components/Modal/ModalPortal';
 import Login from '~components/Login/Login';
 import SvgIcon from '~components/Icon/SvgIcon';
-//import { useTheme } from '@emotion/react';
+import { AuthContext } from 'context/AuthContext';
 
 const Header = () => {
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-    //const theme = useTheme();
+    const { init } = useContext(AuthContext);
 
     return (
         <>
@@ -23,7 +23,7 @@ const Header = () => {
                             setIsOpenModal(true);
                         }}
                     >
-                        로그인
+                        {init ? '로그인' : '로그아웃'}
                     </Button>
                 </RightDiv>
             </HeaderDiv>
