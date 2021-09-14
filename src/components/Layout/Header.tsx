@@ -1,46 +1,20 @@
-import React, { ReactElement, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '~components/Button/Button';
 import styled from '@emotion/styled';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
 import ModalPortal from '~components/Modal/ModalPortal';
 import Login from '~components/Login/Login';
-
-const HeaderDiv = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    background-color: #2979ff;
-    color: white;
-    box-sizing: border-box;
-    padding: 1em;
-    align-items: center;
-`;
-
-const LeftDiv = styled.div`
-    display: flex;
-    flex-basis: 20%;
-`;
-
-const CenterDiv = styled.div`
-    display: flex;
-    flex-basis: 60%;
-    justify-content: center;
-`;
-
-const RightDiv = styled.div`
-    display: flex;
-    flex-basis: 20%;
-    justify-content: right;
-`;
+import SvgIcon from '~components/Icon/SvgIcon';
+//import { useTheme } from '@emotion/react';
 
 const Header = () => {
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    //const theme = useTheme();
 
     return (
         <>
             <HeaderDiv>
                 <LeftDiv>
-                    <StarBorderIcon />
+                    <SvgIcon shape="star-fill" />
                 </LeftDiv>
                 <CenterDiv>인간극장 짤 생성</CenterDiv>
                 <RightDiv>
@@ -68,5 +42,33 @@ const Header = () => {
         </>
     );
 };
+
+const HeaderDiv = styled.div(props => ({
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: props.theme.colors.mainBackground,
+    color: 'black',
+    boxSizing: 'border-box',
+    padding: '1rem',
+    alignItems: 'center',
+}));
+
+const LeftDiv = styled.div`
+    display: flex;
+    flex-basis: 20%;
+`;
+
+const CenterDiv = styled.div`
+    display: flex;
+    flex-basis: 60%;
+    justify-content: center;
+`;
+
+const RightDiv = styled.div`
+    display: flex;
+    flex-basis: 20%;
+    justify-content: right;
+`;
 
 export default Header;

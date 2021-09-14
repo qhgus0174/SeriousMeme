@@ -5,9 +5,9 @@
 
         "paths": {
             "~components/*": ["components/*"],
-            "~assets/*": ["assets/*"]
+            "~assets/*": ["assets/*"],
+            "~styles/*": ["styles/*"]
         },
-
         "removeComments": true,
         "target": "es6",
         "sourceMap": true,
