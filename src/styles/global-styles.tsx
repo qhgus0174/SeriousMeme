@@ -14,7 +14,7 @@ export const GlobalStyle = () => {
 
                 button {
                     background-color: ${theme.colors.primary};
-                    color: ${theme.colors.mainText};
+                    color: ${theme.colors.white};
                     box-sizing: border-box;
                     border: none;
                     outline: 0;

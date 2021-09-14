@@ -4,7 +4,8 @@ declare module '@emotion/react' {
     export interface Theme {
         colors: {
             mainBackground: string;
-            mainText: string;
+            white: string;
+            black: string;
             primary: string;
             primaryDark: string;
             secondary: string;

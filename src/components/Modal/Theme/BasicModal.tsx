@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { IModal, IModalStyle } from '../ModalPortal';
-import { device } from '~styles/common';
+import { media } from '~styles/device';
 
 const BasicModal = ({ children, options }: IModal) => {
     return (
@@ -67,17 +67,17 @@ const ModalInner = styled.div<IModalStyle>`
     box-shadow: 5px 10px 10px 1px rgba(0, 0, 0, 0.3);
 
     //1024px 보다 작으면
-    @media ${device.desktop} {
+    ${media.desktop} {
         max-width: ${props => Number(props.options.width ? props.options.width : '60') * 1.4}vw;
     }
 
     //768px 보다 작으면
-    @media ${device.tablet} {
+    ${media.tablet} {
         max-width: ${props => Number(props.options.width ? props.options.width : '60') * 1.8}vw;
     }
 
     //480px 보다 작으면
-    @media ${device.mobile} {
+    ${media.phone} {
         max-width: 80vw;
     }
 `;
