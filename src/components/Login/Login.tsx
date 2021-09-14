@@ -1,14 +1,17 @@
-import { fbAuthService, fbAuth } from 'fbInstance';
+import { authService } from 'fbInstance';
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import TextBox from '~components/Input/TextBox';
 import Button from '~components/Button/Button';
 import SvgIcon from '~components/Icon/SvgIcon';
+import Tab from '~components/Tab/Tab';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 const Auth = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [newAccount, setNewAccount] = useState(true);
+    const [newAccount, setNewAccount] = useState(false);
+    const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
 
     const onChangeLoginInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {
@@ -27,10 +30,10 @@ const Auth = () => {
         try {
             if (newAccount) {
                 //creat new Account
-                data = await fbAuthService.createUserWithEmailAndPassword(fbAuth, email, password);
+                data = await createUserWithEmailAndPassword(authService, email, password);
             } else {
                 //Login
-                data = await fbAuthService.signInWithEmailAndPassword(fbAuth, email, password);
+                data = await signInWithEmailAndPassword(authService, email, password);
             }
             console.log(data);
         } catch (error) {
@@ -42,12 +45,14 @@ const Auth = () => {
         event.preventDefault();
     };
 
-    const toggleAccount = () => {
-        // /
+    const toggleAccount = (index: number) => {
+        setSelectedTabIndex(index);
+        setNewAccount(index == 0 ? false : true);
     };
 
     return (
         <LoginContainer className="loginContainer">
+            <Tab currIndex={selectedTabIndex} onClickTab={toggleAccount} titles={['SIGN IN', 'CREATE ACCOUNT']} />
             <form onSubmit={onSubmit}>
                 <LoginContent className="loginContent">
                     <TextBox
@@ -68,17 +73,20 @@ const Auth = () => {
                         required
                         value={password}
                     />
-                    <input value={newAccount ? 'Create Account' : 'Log In'} type="submit" />
-                    <span onClick={toggleAccount}></span>
+                    <LoginButton type="submit">{newAccount ? 'Create Account' : 'Sign In'}</LoginButton>
                 </LoginContent>
             </form>
             <LoginButtonContainer className="loginButtonContainer">
-                <Button className="button" icon={<SvgIcon shape="googleLogo" />} onClick={() => onClickLoginSns}>
+                <SnsLoginButton
+                    className="button"
+                    icon={<SvgIcon shape="googleLogo" />}
+                    onClick={() => onClickLoginSns}
+                >
                     Continue with Google
-                </Button>
-                <Button className="button" icon={<SvgIcon shape="github" />} onClick={() => onClickLoginSns}>
+                </SnsLoginButton>
+                <SnsLoginButton className="button" icon={<SvgIcon shape="github" />} onClick={() => onClickLoginSns}>
                     Continue with Github
-                </Button>
+                </SnsLoginButton>
             </LoginButtonContainer>
         </LoginContainer>
     );
@@ -87,6 +95,7 @@ const Auth = () => {
 const LoginContainer = styled.div`
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 `;
 
 const LoginContent = styled.div`
@@ -98,7 +107,27 @@ const LoginContent = styled.div`
 
 const LoginButtonContainer = styled.div`
     display: flex;
+    padding-top: 1.1em;
+    box-sizing: border-box;
     justify-content: center;
-    padding-top: 1em;
 `;
+
+const SnsLoginButton = styled(Button)(props => ({
+    marginLeft: '0.5rem',
+    marginRight: '0.5rem',
+    boxSizing: 'border-box',
+    backgroundColor: props.theme.colors.tertiary,
+
+    '&:hover': {
+        backgroundColor: props.theme.colors.tertiaryDark,
+    },
+}));
+
+const LoginButton = styled(Button)`
+    margin-top: 0.5rem;
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+`;
+
 export default Auth;
