@@ -6,7 +6,7 @@ interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const TextBox = ({ width, ...rest }: ITextProps) => {
-    return <CustomInput type="text" placeholder={rest.placeholder} onClick={rest.onClick} />;
+    return <CustomInput {...rest} />;
 };
 
 const CustomInput = styled.input<ITextProps>`
