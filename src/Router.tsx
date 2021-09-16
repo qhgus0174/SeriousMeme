@@ -4,15 +4,17 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Main from 'routes/Main';
 
 import Header from '~components/Layout/Header';
-import Spinner from '~components/Spinner/spinner';
+import Spinner from '~components/Spinner/Spinner';
 
 const AppRouter = () => {
-    const { init } = useContext(AuthContext);
+    const {
+        state: { init },
+    } = useContext(AuthContext);
 
     return (
         <Router>
             <Header />
-            {!init && <Spinner />}
+            <Spinner visible={!init} />
             <Route exact path="/" component={Main} />
         </Router>
     );

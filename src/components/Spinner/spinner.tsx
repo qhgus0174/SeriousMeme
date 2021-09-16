@@ -3,17 +3,21 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader';
 
-const Spinner = () => {
+interface ISpinner {
+    visible: boolean;
+}
+
+const Spinner = ({ visible = false }: ISpinner) => {
     const theme = useTheme();
     return (
-        <LoadingContainer>
+        <LoadingContainer visible={visible}>
             <ClimbingBoxLoader color={theme.colors.primaryDark} />
         </LoadingContainer>
     );
 };
 
-const LoadingContainer = styled.div`
-    display: flex;
+const LoadingContainer = styled.div<ISpinner>`
+    display: ${props => (props.visible ? 'flex' : 'none')};
     justify-content: center;
     align-items: center;
     position: fixed;
