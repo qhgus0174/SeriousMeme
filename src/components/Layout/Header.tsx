@@ -1,14 +1,29 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Button from '~components/Button/Button';
 import styled from '@emotion/styled';
 import ModalPortal from '~components/Modal/ModalPortal';
 import Login from '~components/Login/Login';
 import SvgIcon from '~components/Icon/SvgIcon';
 import { AuthContext } from 'context/AuthContext';
+import { signOut } from 'firebase/auth';
+import { auth } from 'fbInstance';
+import Spinner from '~components/Spinner/spinner';
 
 const Header = () => {
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-    const { init } = useContext(AuthContext);
+    const {
+        state: { authUser },
+    } = useContext(AuthContext);
+
+    const logOut = async () => {
+        <Spinner visible={true} />;
+        await signOut(auth);
+        <Spinner visible={false} />;
+    };
+
+    useEffect(() => {
+        setIsOpenModal(false);
+    }, [authUser]);
 
     return (
         <>
@@ -20,10 +35,10 @@ const Header = () => {
                 <RightDiv>
                     <Button
                         onClick={() => {
-                            setIsOpenModal(true);
+                            authUser ? logOut() : setIsOpenModal(true);
                         }}
                     >
-                        {init ? '로그인' : '로그아웃'}
+                        {authUser ? '로그아웃' : '로그인'}
                     </Button>
                 </RightDiv>
             </HeaderDiv>
