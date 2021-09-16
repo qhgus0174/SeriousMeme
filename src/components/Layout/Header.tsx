@@ -7,7 +7,7 @@ import SvgIcon from '~components/Icon/SvgIcon';
 import { AuthContext } from 'context/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from 'fbInstance';
-import Spinner from '~components/Spinner/spinner';
+import Spinner from '~components/Spinner/Spinner';
 
 const Header = () => {
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
