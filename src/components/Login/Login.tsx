@@ -1,16 +1,29 @@
-import { authService } from 'fbInstance';
-import React, { useState } from 'react';
+import { auth } from 'fbInstance';
+import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import TextBox from '~components/Input/TextBox';
 import Button from '~components/Button/Button';
 import SvgIcon from '~components/Icon/SvgIcon';
 import Tab from '~components/Tab/Tab';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    GithubAuthProvider,
+    signInWithPopup,
+    signOut,
+} from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { AuthContext } from 'context/AuthContext';
 
-const Auth = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [newAccount, setNewAccount] = useState(false);
+const Login = () => {
+    const {
+        state: { authUser },
+    } = useContext(AuthContext);
+
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [newAccount, setNewAccount] = useState<boolean>(false);
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
 
     const onChangeLoginInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,19 +43,45 @@ const Auth = () => {
         try {
             if (newAccount) {
                 //creat new Account
-                data = await createUserWithEmailAndPassword(authService, email, password);
+                data = await createUserWithEmailAndPassword(auth, email, password);
             } else {
                 //Login
-                data = await signInWithEmailAndPassword(authService, email, password);
+                data = await signInWithEmailAndPassword(auth, email, password);
             }
             console.log(data);
-        } catch (error) {
-            console.log(error);
+        } catch (err: unknown) {
+            //https://firebase.google.com/docs/auth/admin/errors?hl=ko
+            const { message } = err as Error;
+            console.log(message);
+
+            let returnMsg = '';
+
+            if (message.includes('user-not-found')) {
+                returnMsg = '사용자를 찾을 수 없습니다.';
+            } else if (message.includes('weak-password')) {
+                returnMsg = '비밀번호 길이가 너무 짧습니다.';
+            }
+            toast.error(returnMsg);
         }
     };
 
-    const onClickLoginSns = (event: React.MouseEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const logOut = async () => {
+        await signOut(auth);
+    };
+
+    const onClickLoginSns = (event: React.MouseEvent<HTMLButtonElement>) => {
+        const {
+            currentTarget: { name },
+        } = event;
+
+        switch (name) {
+            case 'google':
+                signInWithPopup(auth, new GoogleAuthProvider());
+                break;
+            case 'github':
+                signInWithPopup(auth, new GithubAuthProvider());
+                break;
+        }
     };
 
     const toggleAccount = (index: number) => {
@@ -53,12 +92,13 @@ const Auth = () => {
     return (
         <LoginContainer className="loginContainer">
             <Tab currIndex={selectedTabIndex} onClickTab={toggleAccount} titles={['SIGN IN', 'CREATE ACCOUNT']} />
-            <form onSubmit={onSubmit}>
+
+            <form onSubmit={authUser ? logOut : onSubmit}>
                 <LoginContent className="loginContent">
                     <TextBox
                         className="textBox"
                         onChange={onChangeLoginInput}
-                        type="text"
+                        type="email"
                         name="email"
                         placeholder="Email"
                         required
@@ -79,12 +119,18 @@ const Auth = () => {
             <LoginButtonContainer className="loginButtonContainer">
                 <SnsLoginButton
                     className="button"
+                    name="google"
                     icon={<SvgIcon shape="googleLogo" />}
-                    onClick={() => onClickLoginSns}
+                    onClick={onClickLoginSns}
                 >
                     Continue with Google
                 </SnsLoginButton>
-                <SnsLoginButton className="button" icon={<SvgIcon shape="github" />} onClick={() => onClickLoginSns}>
+                <SnsLoginButton
+                    name="github"
+                    className="button"
+                    icon={<SvgIcon shape="github" />}
+                    onClick={onClickLoginSns}
+                >
                     Continue with Github
                 </SnsLoginButton>
             </LoginButtonContainer>
@@ -130,4 +176,8 @@ const LoginButton = styled(Button)`
     box-sizing: border-box;
 `;
 
-export default Auth;
+const ErrorMsg = styled.span`
+    color: ${props => props.theme.colors.warning};
+`;
+
+export default Login;
