@@ -12,6 +12,10 @@ declare module '@emotion/react' {
             secondaryDark: string;
             tertiary: string;
             tertiaryDark: string;
+            success: string;
+            info: string;
+            warning: string;
+            error: string;
         };
         // mode: {
         //     mainBackground: string;

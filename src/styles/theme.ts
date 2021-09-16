@@ -11,5 +11,9 @@ export const basic: Theme = {
         secondaryDark: '#30718A',
         tertiary: '#F5A962',
         tertiaryDark: '#F18622',
+        success: '#50D890',
+        info: '#51C2D5',
+        warning: '#FFD271',
+        error: '#CE1212',
     },
 };

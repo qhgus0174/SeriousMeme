@@ -26,6 +26,10 @@ export const GlobalStyle = () => {
                     align-items: center;
                     svg {
                         align-items: center;
+                        pointer-events: none;
+                    }
+                    span {
+                        pointer-events: none;
                     }
                     &:hover {
                         background-color: ${theme.colors.primaryDark};
