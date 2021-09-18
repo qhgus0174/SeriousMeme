@@ -1,6 +1,6 @@
-import { css, jsx, useTheme } from '@emotion/react';
+import React from 'react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { useState } from 'react';
 
 interface ITab {
     titles: string[]; //탭 헤더 명

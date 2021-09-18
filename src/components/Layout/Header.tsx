@@ -1,14 +1,16 @@
 import React, { useContext, useEffect } from 'react';
 import Button from '~components/Button/Button';
-import styled from '@emotion/styled';
-import Login from '~components/Login/Login';
 import SvgIcon from '~components/Icon/SvgIcon';
-import { AuthContext } from 'context/AuthContext';
-import { signOut } from 'firebase/auth';
-import { auth } from 'firebase/firebaseInstance';
+import Login from '~components/Login/Login';
 import Spinner from '~components/Spinner/Spinner';
+import styled from '@emotion/styled';
+import { AuthContext } from '~context/AuthContext';
+import { auth } from '~firebase/firebaseInstance';
+import { ModalActionContext } from '~context/ModalContext';
+
+import { signOut } from 'firebase/auth';
+
 import { toast } from 'react-toastify';
-import { ModalActionContext } from 'context/ModalContext';
 
 const Header = () => {
     const {

@@ -1,4 +1,4 @@
-import { db } from 'firebase/firebaseInstance';
+import { db } from '~firebase/firebaseInstance';
 import {
     collection,
     addDoc as fsAddDoc,

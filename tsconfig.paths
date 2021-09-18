@@ -4,9 +4,12 @@
         "jsxImportSource": "@emotion/react",
 
         "paths": {
-            "~components/*": ["components/*"],
             "~assets/*": ["assets/*"],
-            "~styles/*": ["styles/*"]
+            "~components/*": ["components/*"],
+            "~context/*": ["context/*"],
+            "~firebase/*": ["firebase/*"],
+            "~hooks/*": ["hooks/*"],
+            "~styles/*": ["styles/*"],
         },
         "removeComments": true,
         "target": "es6",

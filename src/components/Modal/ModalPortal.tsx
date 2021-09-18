@@ -1,8 +1,8 @@
-import { ModalStateContext } from 'context/ModalContext';
-import { IModalOption } from 'hooks/useModal';
 import React, { useContext } from 'react';
 import { createPortal } from 'react-dom';
-import BasicModal from './Theme/BasicModal';
+import { ModalStateContext } from '~context/ModalContext';
+import BasicModal from '~components/Modal/Theme/BasicModal';
+import { IModalOption } from '~hooks/useModal';
 
 export interface IModal {
     children: React.ReactNode;

@@ -1,10 +1,11 @@
-import { AuthContext } from 'context/AuthContext';
-import { addDoc, IBoard, queryBoardCollection } from 'firebase/board/board';
-import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '~context/AuthContext';
+import { addDoc, IBoard, queryBoardCollection } from '~firebase/board/board';
 import Button from '~components/Button/Button';
 import TextBox from '~components/Input/TextBox';
 import ListItem from '~components/List/ListItem';
+
+import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 
 const Main = () => {
     const {

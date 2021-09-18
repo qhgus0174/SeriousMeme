@@ -1,10 +1,11 @@
-import { auth } from 'firebase/firebaseInstance';
 import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import TextBox from '~components/Input/TextBox';
 import Button from '~components/Button/Button';
 import SvgIcon from '~components/Icon/SvgIcon';
 import Tab from '~components/Tab/Tab';
+import { AuthContext } from '~context/AuthContext';
+import { auth } from '~firebase/firebaseInstance';
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -14,7 +15,6 @@ import {
     signOut,
 } from 'firebase/auth';
 import { toast } from 'react-toastify';
-import { AuthContext } from 'context/AuthContext';
 
 const Login = () => {
     const {

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 import { media } from '~styles/device';
-import { ModalActionContext } from 'context/ModalContext';
-import { IModalOption } from 'hooks/useModal';
-import { IModal } from '../ModalPortal';
+import { ModalActionContext } from '~context/ModalContext';
+import { IModalOption } from '~hooks/useModal';
+import { IModal } from '~components/Modal/ModalPortal';
 
 const BasicModal = ({ children, options }: IModal) => {
     const { closeModal } = useContext(ModalActionContext);

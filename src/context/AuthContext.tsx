@@ -1,6 +1,6 @@
-import { auth } from 'fbInstance';
+import React, { createContext, useState } from 'react';
+import { auth } from '~firebase/firebaseInstance';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import React, { createContext, useEffect, useState } from 'react';
 
 interface IAuth {
     state: {

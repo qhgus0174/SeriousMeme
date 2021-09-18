@@ -1,5 +1,5 @@
-import { IModalProps, useModal } from 'hooks/useModal';
 import React, { createContext } from 'react';
+import { IModalProps, useModal } from '~hooks/useModal';
 import ModalPortal from '~components/Modal/ModalPortal';
 
 interface IModalAction {

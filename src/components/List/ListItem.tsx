@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { deleteDoc, IBoard, updateDoc } from 'firebase/board/board';
 import Button from '~components/Button/Button';
-import { AuthContext } from 'context/AuthContext';
-import { css } from '@emotion/react';
 import TextBox from '~components/Input/TextBox';
+import { deleteDoc, IBoard, updateDoc } from '~firebase/board/board';
+import { AuthContext } from '~context/AuthContext';
+import { css } from '@emotion/react';
 
 const ListItem = (items: IBoard) => {
     const [isEdit, setIsEdit] = useState<boolean>(false);
