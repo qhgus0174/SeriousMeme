@@ -1,17 +1,10 @@
 import { AuthContext } from 'context/AuthContext';
-import { addDoc, boardCollection, IPost, queryBoardCollection } from 'fbInstance';
-import {
-    DocumentData,
-    DocumentSnapshot,
-    onSnapshot,
-    orderBy,
-    QueryDocumentSnapshot,
-    QuerySnapshot,
-    Unsubscribe,
-} from 'firebase/firestore';
+import { addDoc, IBoard, queryBoardCollection } from 'firebase/board/board';
+import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import Button from '~components/Button/Button';
 import TextBox from '~components/Input/TextBox';
+import ListItem from '~components/List/ListItem';
 
 const Main = () => {
     const {
@@ -19,15 +12,20 @@ const Main = () => {
     } = useContext(AuthContext);
 
     const [content, setContent] = useState<string>('');
-    const [contentList, setContentList] = useState<IPost[]>([]);
+    const [contentList, setContentList] = useState<IBoard[]>([]);
 
     useEffect(() => {
         getList();
     }, []);
 
-    const getList = async () => {
-        await onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
-            const postList = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => doc.data()) as IPost[];
+    const getList = () => {
+        onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
+            const snapshotDocs = snapshot.docs as Array<QueryDocumentSnapshot<IBoard>>;
+
+            const postList = snapshotDocs.map((doc: QueryDocumentSnapshot<IBoard>) => {
+                return { ...doc.data(), docId: doc.id };
+            });
+
             setContentList(postList);
         });
     };
@@ -37,7 +35,8 @@ const Main = () => {
         try {
             await addDoc({
                 content: content,
-                createUser: authUser ? authUser?.email : 'anonymous',
+                createUserId: authUser ? authUser.uid : 'anonymous',
+                createUserEmail: authUser ? authUser?.email : 'anonymous',
             });
 
             setContent('');
@@ -56,13 +55,30 @@ const Main = () => {
     };
 
     return (
-        <form onSubmit={addPost}>
-            <TextBox onChange={onChange} name="content" type="text" placeholder="대사를 입력 해 주셈." />
-            <Button type="submit">Go</Button>
-            {contentList.map((content: IPost, index: number) => {
-                return <div key={index}>{content.content}</div>;
+        <>
+            <form onSubmit={addPost}>
+                <TextBox
+                    onChange={onChange}
+                    name="content"
+                    type="text"
+                    placeholder="대사를 입력 해 주셈."
+                    value={content}
+                />
+                <Button type="submit">Go</Button>
+            </form>
+            {contentList.map((content: IBoard) => {
+                return (
+                    <ListItem
+                        key={content.docId}
+                        docId={content.docId}
+                        content={content.content}
+                        createAt={content.createAt}
+                        createUserId={content.createUserId}
+                        createUserEmail={content.createUserEmail}
+                    />
+                );
             })}
-        </form>
+        </>
     );
 };
 export default Main;

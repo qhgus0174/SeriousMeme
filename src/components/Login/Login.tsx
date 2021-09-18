@@ -1,4 +1,4 @@
-import { auth } from 'fbInstance';
+import { auth } from 'firebase/firebaseInstance';
 import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import TextBox from '~components/Input/TextBox';
@@ -43,10 +43,28 @@ const Login = () => {
         try {
             if (newAccount) {
                 //creat new Account
-                data = await createUserWithEmailAndPassword(auth, email, password);
+                data = await createUserWithEmailAndPassword(auth, email, password)
+                    .then(res => {
+                        toast('계정이 생성되었습니다.');
+                    })
+                    .catch((err: unknown) => {
+                        const { message } = err as Error;
+
+                        if (message.includes('email-already-in-use')) {
+                            toast.error('이미 가입 된 계정 입니다.');
+                        } else {
+                            toast.error('계정 생성 중 오류가 발생했습니다.');
+                        }
+                    });
             } else {
                 //Login
-                data = await signInWithEmailAndPassword(auth, email, password);
+                data = await signInWithEmailAndPassword(auth, email, password)
+                    .then(res => {
+                        toast('로그인 되었습니다.');
+                    })
+                    .catch(() => {
+                        toast.error('로그인 중 오류가 발생했습니다.');
+                    });
             }
             console.log(data);
         } catch (err: unknown) {
@@ -60,13 +78,11 @@ const Login = () => {
                 returnMsg = '사용자를 찾을 수 없습니다.';
             } else if (message.includes('weak-password')) {
                 returnMsg = '비밀번호 길이가 너무 짧습니다.';
+            } else if (message.includes('wrong-password')) {
+                returnMsg = '이메일 또는 아이디가 잘못되었습니다.';
             }
             toast.error(returnMsg);
         }
-    };
-
-    const logOut = async () => {
-        await signOut(auth);
     };
 
     const onClickLoginSns = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,10 +92,22 @@ const Login = () => {
 
         switch (name) {
             case 'google':
-                signInWithPopup(auth, new GoogleAuthProvider());
+                signInWithPopup(auth, new GoogleAuthProvider())
+                    .then(() => {
+                        toast('로그인 되었습니다.');
+                    })
+                    .catch(() => {
+                        toast.error('로그인 중 오류가 발생했습니다.');
+                    });
                 break;
             case 'github':
-                signInWithPopup(auth, new GithubAuthProvider());
+                signInWithPopup(auth, new GithubAuthProvider())
+                    .then(() => {
+                        toast('로그인 되었습니다.');
+                    })
+                    .catch(() => {
+                        toast.error('로그인 중 오류가 발생했습니다.');
+                    });
                 break;
         }
     };
@@ -93,7 +121,7 @@ const Login = () => {
         <LoginContainer className="loginContainer">
             <Tab currIndex={selectedTabIndex} onClickTab={toggleAccount} titles={['SIGN IN', 'CREATE ACCOUNT']} />
 
-            <form onSubmit={authUser ? logOut : onSubmit}>
+            <form onSubmit={onSubmit}>
                 <LoginContent className="loginContent">
                     <TextBox
                         className="textBox"
