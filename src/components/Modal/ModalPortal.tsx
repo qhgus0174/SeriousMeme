@@ -1,44 +1,26 @@
+import { ModalStateContext } from 'context/ModalContext';
+import { IModalOption } from 'hooks/useModal';
+import React, { useContext } from 'react';
 import { createPortal } from 'react-dom';
 import BasicModal from './Theme/BasicModal';
 
-interface IModalOption {
-    visible: boolean;
-    setParentState: (e: boolean) => void;
-    width?: string;
-    height?: string;
-    headerTitle?: string;
-}
-
-export interface IModalPortal {
-    modalType: 'basic';
-    options: IModalOption;
-    children: React.ReactNode;
-}
-
 export interface IModal {
-    options: IModalOption;
     children: React.ReactNode;
+    options?: IModalOption;
 }
 
-export interface IModalStyle {
-    options: {
-        visible: boolean;
-        width?: string;
-        height?: string;
-    };
-}
-
-const ModalPortal = ({ modalType, options, children }: IModalPortal) => {
+const ModalPortal = () => {
+    const { isOpen, content, type, options } = useContext(ModalStateContext);
     const renderModal = () => {
-        switch (modalType) {
+        switch (type) {
             case 'basic':
-                return <BasicModal options={options}>{children}</BasicModal>;
+                return <BasicModal options={options}>{content}</BasicModal>;
             default:
-                return <></>;
+                return <>aaa</>;
         }
     };
 
-    return createPortal(renderModal(), document.getElementById('modal-root') as HTMLElement);
+    return createPortal(isOpen && renderModal(), document.getElementById('modal-root') as HTMLElement);
 };
 
 export default ModalPortal;

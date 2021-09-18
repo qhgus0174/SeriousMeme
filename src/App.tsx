@@ -6,13 +6,16 @@ import { ThemeProvider } from '@emotion/react';
 import AuthContext from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ModalContext from 'context/ModalContext';
 
 const App = () => {
     return (
         <ThemeProvider theme={basic}>
             <GlobalStyle />
             <AuthContext>
-                <AppRouter />
+                <ModalContext>
+                    <AppRouter />
+                </ModalContext>
             </AuthContext>
             <ToastContainer />
         </ThemeProvider>

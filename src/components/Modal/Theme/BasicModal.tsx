@@ -1,43 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import styled from '@emotion/styled';
-import { IModal, IModalStyle } from '../ModalPortal';
 import { media } from '~styles/device';
+import { ModalActionContext } from 'context/ModalContext';
+import { IModalOption } from 'hooks/useModal';
+import { IModal } from '../ModalPortal';
 
 const BasicModal = ({ children, options }: IModal) => {
+    const { closeModal } = useContext(ModalActionContext);
     return (
         <>
-            {options.visible ? (
-                <>
-                    <ModalWrapper
-                        className="modalWrapper"
-                        tabIndex={-1}
-                        options={options}
-                        onClick={() => {
-                            options.setParentState(false);
-                        }}
-                    >
-                        <ModalInner
-                            className="modalInner"
-                            tabIndex={0}
-                            options={options}
-                            onClick={(e: React.MouseEvent) => {
-                                e.stopPropagation();
-                            }}
-                        >
-                            {options.headerTitle && <ModalHeader>{options.headerTitle}</ModalHeader>}
-                            <ModalBody className="modalBody">
-                                <ModalContent className="modalContent">{children}</ModalContent>
-                            </ModalBody>
-                        </ModalInner>
-                    </ModalWrapper>
-                </>
-            ) : null}
+            <ModalWrapper
+                className="modalWrapper"
+                tabIndex={-1}
+                onClick={() => {
+                    closeModal();
+                }}
+            >
+                <ModalInner
+                    className="modalInner"
+                    tabIndex={0}
+                    width={options?.width}
+                    height={options?.height}
+                    onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                    }}
+                >
+                    {options?.headerTitle && <ModalHeader>{options.headerTitle}</ModalHeader>}
+                    <ModalBody className="modalBody">
+                        <ModalContent className="modalContent">{children}</ModalContent>
+                    </ModalBody>
+                </ModalInner>
+            </ModalWrapper>
         </>
     );
 };
 
-const ModalWrapper = styled.div<IModalStyle>`
-    display: ${props => (props.options.visible ? 'flex' : 'none')};
+const ModalWrapper = styled.div`
+    display: flex;
     justify-content: center;
     align-items: center;
     position: fixed;
@@ -51,7 +50,7 @@ const ModalWrapper = styled.div<IModalStyle>`
 `;
 
 //반응형이기 때문에 가로값(width)은 100%를 잡고, max-width로 최대값을 잡습니다.
-const ModalInner = styled.div<IModalStyle>`
+const ModalInner = styled.div<Pick<IModalOption, 'width' | 'height'>>`
     // 여기 media쿼리 밖이 기본 css 세팅임
     box-sizing: border-box;
     background-color: white;
@@ -60,20 +59,20 @@ const ModalInner = styled.div<IModalStyle>`
     width: 100%;
 
     //부모 기준 X, 브라우저 기준이라 v* 사용
-    max-width: ${props => (props.options.width ? props.options.width : '60')}vw;
-    height: ${props => (props.options.height ? props.options.height : '60')}vh;
+    max-width: ${props => (props.width ? props.width : '60')}vw;
+    height: ${props => (props.height ? props.height : '60')}vh;
 
     outline: none;
     box-shadow: 5px 10px 10px 1px rgba(0, 0, 0, 0.3);
 
     //1024px 보다 작으면
     ${media.desktop} {
-        max-width: ${props => Number(props.options.width ? props.options.width : '60') * 1.4}vw;
+        max-width: ${props => Number(props.width ? props.width : '60') * 1.4}vw;
     }
 
     //768px 보다 작으면
     ${media.tablet} {
-        max-width: ${props => Number(props.options.width ? props.options.width : '60') * 1.8}vw;
+        max-width: ${props => Number(props.width ? props.width : '60') * 1.8}vw;
     }
 
     //480px 보다 작으면

@@ -1,28 +1,35 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Button from '~components/Button/Button';
 import styled from '@emotion/styled';
-import ModalPortal from '~components/Modal/ModalPortal';
 import Login from '~components/Login/Login';
 import SvgIcon from '~components/Icon/SvgIcon';
 import { AuthContext } from 'context/AuthContext';
 import { signOut } from 'firebase/auth';
-import { auth } from 'fbInstance';
+import { auth } from 'firebase/firebaseInstance';
 import Spinner from '~components/Spinner/Spinner';
+import { toast } from 'react-toastify';
+import { ModalActionContext } from 'context/ModalContext';
 
 const Header = () => {
-    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
     const {
         state: { authUser },
     } = useContext(AuthContext);
 
+    const { openModal, closeModal, setModalProps } = useContext(ModalActionContext);
+
     const logOut = async () => {
         <Spinner visible={true} />;
-        await signOut(auth);
-        <Spinner visible={false} />;
+        await signOut(auth)
+            .then(() => {
+                toast('로그아웃 되었습니다.');
+            })
+            .catch(error => {
+                toast.error('로그아웃 중 오류가 발생했습니다.');
+            });
     };
 
     useEffect(() => {
-        setIsOpenModal(false);
+        closeModal();
     }, [authUser]);
 
     return (
@@ -35,25 +42,20 @@ const Header = () => {
                 <RightDiv>
                     <Button
                         onClick={() => {
-                            authUser ? logOut() : setIsOpenModal(true);
+                            authUser
+                                ? logOut()
+                                : setModalProps({
+                                      isOpen: true,
+                                      type: 'basic',
+                                      content: <Login />,
+                                      options: { width: '30', height: '80', headerTitle: 'LOGIN' },
+                                  });
                         }}
                     >
                         {authUser ? '로그아웃' : '로그인'}
                     </Button>
                 </RightDiv>
             </HeaderDiv>
-            <ModalPortal
-                modalType="basic"
-                options={{
-                    width: '30',
-                    height: '80',
-                    visible: isOpenModal,
-                    setParentState: setIsOpenModal,
-                    headerTitle: 'LOGIN',
-                }}
-            >
-                <Login />
-            </ModalPortal>
         </>
     );
 };
