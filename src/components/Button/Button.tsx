@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
 
 export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     icon?: JSX.Element;
@@ -8,7 +7,6 @@ export interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 }
 
 const Button = ({ children, icon, color, ...rest }: IButtonProps) => {
-    const theme = useTheme();
     return (
         <>
             <BasicButton {...rest} icon={icon} color={color}>
