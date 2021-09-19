@@ -11,7 +11,7 @@ interface IAuth {
 
 export const AuthContext = createContext<IAuth>({ state: { init: false, authUser: null } });
 
-const AuthProvider: React.FC = props => {
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [authUser, setAuthUser] = useState<User | null>(null);
     const [init, setInit] = useState<boolean>(false);
 
@@ -21,9 +21,7 @@ const AuthProvider: React.FC = props => {
     });
 
     return (
-        <AuthContext.Provider value={{ state: { init: init, authUser: authUser } }}>
-            {props.children}
-        </AuthContext.Provider>
+        <AuthContext.Provider value={{ state: { init: init, authUser: authUser } }}>{children}</AuthContext.Provider>
     );
 };
 
