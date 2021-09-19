@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react';
 import Button from '~components/Button/Button';
 import SvgIcon from '~components/Icon/SvgIcon';
 import Login from '~components/Login/Login';
-import Spinner from '~components/Spinner/Spinner';
 import styled from '@emotion/styled';
 import { AuthContext } from '~context/AuthContext';
 import { auth } from '~firebase/firebaseInstance';
@@ -20,7 +19,6 @@ const Header = () => {
     const { openModal, closeModal, setModalProps } = useContext(ModalActionContext);
 
     const logOut = async () => {
-        <Spinner visible={true} />;
         await signOut(auth)
             .then(() => {
                 toast('로그아웃 되었습니다.');

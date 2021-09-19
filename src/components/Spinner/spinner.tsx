@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader';
+import { SpinnerContext } from '~context/SpinnerContext';
 
 interface ISpinner {
     visible: boolean;
 }
 
-const Spinner = ({ visible }: ISpinner) => {
+const Spinner = () => {
     const theme = useTheme();
-    const [isVisible, setIsVisible] = useState<boolean>(visible);
-
+    console.log('스피너 레ㅐㄴ더링');
     useEffect(() => {
-        setIsVisible(visible);
-    }, [visible]);
+        console.log('스피너 리렌더링');
+    });
+    const { visible } = useContext(SpinnerContext);
 
     return (
-        <LoadingContainer visible={isVisible}>
+        <LoadingContainer visible={visible}>
             <ClimbingBoxLoader color={theme.colors.primaryDark} />
         </LoadingContainer>
     );
