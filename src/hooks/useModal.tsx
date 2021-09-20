@@ -4,11 +4,12 @@ export interface IModalOption {
     width?: string;
     height?: string;
     headerTitle?: string;
+    confirmFn?: () => void | Promise<void>;
 }
 
 export interface IModalProps {
     isOpen: boolean;
-    type: 'basic';
+    type: 'basic' | 'dialog';
     content: ReactElement;
     options?: IModalOption;
 }
