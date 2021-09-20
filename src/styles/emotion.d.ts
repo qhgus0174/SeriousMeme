@@ -17,6 +17,17 @@ declare module '@emotion/react' {
             warning: string;
             error: string;
         };
+        buttonColors: {
+            basic: string;
+            cancel: string;
+            orange: string;
+        };
+
+        buttonColorsHover: {
+            basic: string;
+            cancel: string;
+            orange: string;
+        };
         // mode: {
         //     mainBackground: string;
         //     primaryText: string;

@@ -16,4 +16,15 @@ export const basic: Theme = {
         warning: '#FFD271',
         error: '#CE1212',
     },
+
+    buttonColors: {
+        basic: '#125D98',
+        cancel: '#C0C5CD',
+        orange: '#F5A962',
+    },
+    buttonColorsHover: {
+        basic: '#0E4A7A',
+        cancel: '#949caa',
+        orange: '#F18622',
+    },
 };
