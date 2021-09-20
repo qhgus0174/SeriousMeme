@@ -15,18 +15,19 @@ export interface IBoard {
     createUserId?: string | null;
     createUserEmail?: string | null;
     createAt?: number;
+    attatchmentUrl?: string | null;
 }
 
 //게시물 - board collection
 export const boardCollection = collection(db, 'board');
 export const queryBoardCollection = query(collection(db, 'board'), orderBy('createAt', 'asc'));
 
-const doc = (docId: string) => fsDoc(boardCollection, docId);
+const doc = (docId: IBoard['docId']) => fsDoc(boardCollection, docId);
 
-export const addDoc = async (data: Pick<IBoard, 'content' | 'createUserId' | 'createUserEmail' | 'createAt'>) =>
+export const addDoc = async (data: Omit<IBoard, 'docId'>) =>
     await fsAddDoc(boardCollection, Object.assign({}, data, { createAt: Date.now() }));
 
-export const updateDoc = async ({ docId, content }: Pick<IBoard, 'docId' | 'content'>) =>
+export const updateDoc = async (docId: IBoard['docId'], content: IBoard['content']) =>
     await fsUpdateDoc(doc(docId), { content: content, createAt: Date.now() });
 
-export const deleteDoc = async ({ docId }: Pick<IBoard, 'docId'>) => await fsDelDoc(doc(docId));
+export const deleteDoc = async (docId: IBoard['docId']) => await fsDelDoc(doc(docId));
