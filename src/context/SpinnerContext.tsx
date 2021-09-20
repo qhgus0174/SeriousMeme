@@ -2,17 +2,17 @@ import React, { createContext, useState } from 'react';
 import Spinner from '~components/Spinner/Spinner';
 
 interface ISpinner {
-    visible: boolean;
-    setVisible: (e: boolean) => void;
+    spinnerVisible: boolean;
+    setSpinnerVisible: (e: boolean) => void;
 }
 
-export const SpinnerContext = createContext<ISpinner>({ visible: false, setVisible: (e: boolean) => {} });
+export const SpinnerContext = createContext<ISpinner>({ spinnerVisible: false, setSpinnerVisible: (e: boolean) => {} });
 
 const SpinnerProvider = ({ children }: { children: React.ReactNode }) => {
-    const [visible, setVisible] = useState<ISpinner['visible']>(false);
+    const [spinnerVisible, setSpinnerVisible] = useState<ISpinner['spinnerVisible']>(false);
 
     return (
-        <SpinnerContext.Provider value={{ visible, setVisible }}>
+        <SpinnerContext.Provider value={{ spinnerVisible, setSpinnerVisible }}>
             <Spinner />
             {children}
         </SpinnerContext.Provider>

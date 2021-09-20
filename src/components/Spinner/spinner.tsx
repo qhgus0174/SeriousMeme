@@ -1,30 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader';
+import PuffLoader from 'react-spinners/PuffLoader';
 import { SpinnerContext } from '~context/SpinnerContext';
 
 interface ISpinner {
-    visible: boolean;
+    spinnerVisible: boolean;
 }
 
 const Spinner = () => {
     const theme = useTheme();
-    console.log('스피너 레ㅐㄴ더링');
-    useEffect(() => {
-        console.log('스피너 리렌더링');
-    });
-    const { visible } = useContext(SpinnerContext);
+    const { spinnerVisible } = useContext(SpinnerContext);
 
     return (
-        <LoadingContainer visible={visible}>
-            <ClimbingBoxLoader color={theme.colors.primaryDark} />
+        <LoadingContainer spinnerVisible={spinnerVisible}>
+            <PuffLoader color={theme.colors.primaryDark} />
         </LoadingContainer>
     );
 };
 
 const LoadingContainer = styled.div<ISpinner>`
-    display: ${props => (props.visible ? 'flex' : 'none')};
+    display: ${props => (props.spinnerVisible ? 'flex' : 'none')};
     justify-content: center;
     align-items: center;
     position: fixed;
@@ -34,6 +30,7 @@ const LoadingContainer = styled.div<ISpinner>`
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 9999;
 `;
 
 export default Spinner;

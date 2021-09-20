@@ -11,10 +11,10 @@ const AppRouter = () => {
         state: { init },
     } = useContext(AuthContext);
 
-    const { setVisible } = useContext(SpinnerContext);
+    const { setSpinnerVisible } = useContext(SpinnerContext);
 
     useEffect(() => {
-        init ? setVisible(false) : setVisible(true);
+        init ? setSpinnerVisible(false) : setSpinnerVisible(true);
     }, [init]);
 
     return (

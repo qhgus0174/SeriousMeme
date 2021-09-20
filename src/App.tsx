@@ -5,7 +5,7 @@ import { basic } from '~styles/theme';
 import AuthContext from '~context/AuthContext';
 import ModalContext from '~context/ModalContext';
 import SpinnerContext from '~context/SpinnerContext';
-import { ToastContainer } from 'react-toastify';
+import { Flip, ToastContainer } from 'react-toastify';
 import { ThemeProvider } from '@emotion/react';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,14 +13,27 @@ const App = () => {
     return (
         <ThemeProvider theme={basic}>
             <GlobalStyle />
-            <AuthContext>
-                <ModalContext>
-                    <SpinnerContext>
+            <SpinnerContext>
+                <AuthContext>
+                    <ModalContext>
                         <AppRouter />
-                    </SpinnerContext>
-                </ModalContext>
-            </AuthContext>
-            <ToastContainer />
+                    </ModalContext>
+                </AuthContext>
+            </SpinnerContext>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable={false}
+                pauseOnHover={false}
+                transition={Flip}
+                theme="dark"
+                limit={5}
+            />
         </ThemeProvider>
     );
 };

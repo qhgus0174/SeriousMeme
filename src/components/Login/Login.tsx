@@ -4,7 +4,6 @@ import TextBox from '~components/Input/TextBox';
 import Button from '~components/Button/Button';
 import SvgIcon from '~components/Icon/SvgIcon';
 import Tab from '~components/Tab/Tab';
-import { AuthContext } from '~context/AuthContext';
 import { auth } from '~firebase/firebaseInstance';
 import {
     createUserWithEmailAndPassword,
@@ -12,19 +11,17 @@ import {
     GoogleAuthProvider,
     GithubAuthProvider,
     signInWithPopup,
-    signOut,
 } from 'firebase/auth';
 import { toast } from 'react-toastify';
+import { SpinnerContext } from '~context/SpinnerContext';
 
 const Login = () => {
-    const {
-        state: { authUser },
-    } = useContext(AuthContext);
-
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [newAccount, setNewAccount] = useState<boolean>(false);
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
+
+    const { setSpinnerVisible } = useContext(SpinnerContext);
 
     const onChangeLoginInput = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {
@@ -39,76 +36,44 @@ const Login = () => {
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        let data;
+
+        setSpinnerVisible(true);
+
         try {
-            if (newAccount) {
-                //creat new Account
-                data = await createUserWithEmailAndPassword(auth, email, password)
-                    .then(res => {
-                        toast('계정이 생성되었습니다.');
-                    })
-                    .catch((err: unknown) => {
-                        const { message } = err as Error;
-
-                        if (message.includes('email-already-in-use')) {
-                            toast.error('이미 가입 된 계정 입니다.');
-                        } else {
-                            toast.error('계정 생성 중 오류가 발생했습니다.');
-                        }
-                    });
-            } else {
-                //Login
-                data = await signInWithEmailAndPassword(auth, email, password)
-                    .then(res => {
-                        toast('로그인 되었습니다.');
-                    })
-                    .catch(() => {
-                        toast.error('로그인 중 오류가 발생했습니다.');
-                    });
-            }
-            console.log(data);
+            newAccount
+                ? await createUserWithEmailAndPassword(auth, email, password)
+                : await signInWithEmailAndPassword(auth, email, password);
         } catch (err: unknown) {
-            //https://firebase.google.com/docs/auth/admin/errors?hl=ko
             const { message } = err as Error;
-            console.log(message);
 
-            let returnMsg = '';
-
-            if (message.includes('user-not-found')) {
-                returnMsg = '사용자를 찾을 수 없습니다.';
+            if (message.includes('email-already-in-use')) {
+                toast.error('이미 가입 된 계정 입니다.');
+            } else if (message.includes('user-not-found')) {
+                toast.error('사용자를 찾을 수 없습니다.');
             } else if (message.includes('weak-password')) {
-                returnMsg = '비밀번호 길이가 너무 짧습니다.';
+                toast.error('비밀번호 길이가 너무 짧습니다.');
             } else if (message.includes('wrong-password')) {
-                returnMsg = '이메일 또는 아이디가 잘못되었습니다.';
+                toast.error('이메일 또는 아이디가 잘못되었습니다.');
+            } else {
+                toast.error('계정 생성 중 오류가 발생했습니다.');
             }
-            toast.error(returnMsg);
+        } finally {
+            setSpinnerVisible(false);
         }
     };
 
-    const onClickLoginSns = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const onClickLoginSns = async (event: React.MouseEvent<HTMLButtonElement>) => {
         const {
             currentTarget: { name },
         } = event;
 
-        switch (name) {
-            case 'google':
-                signInWithPopup(auth, new GoogleAuthProvider())
-                    .then(() => {
-                        toast('로그인 되었습니다.');
-                    })
-                    .catch(() => {
-                        toast.error('로그인 중 오류가 발생했습니다.');
-                    });
-                break;
-            case 'github':
-                signInWithPopup(auth, new GithubAuthProvider())
-                    .then(() => {
-                        toast('로그인 되었습니다.');
-                    })
-                    .catch(() => {
-                        toast.error('로그인 중 오류가 발생했습니다.');
-                    });
-                break;
+        setSpinnerVisible(true);
+        try {
+            await signInWithPopup(auth, name === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider());
+        } catch {
+            toast.error('로그인 중 오류가 발생했습니다.');
+        } finally {
+            setSpinnerVisible(false);
         }
     };
 
@@ -118,13 +83,12 @@ const Login = () => {
     };
 
     return (
-        <LoginContainer className="loginContainer">
+        <LoginContainer>
             <Tab currIndex={selectedTabIndex} onClickTab={toggleAccount} titles={['SIGN IN', 'CREATE ACCOUNT']} />
 
             <form onSubmit={onSubmit}>
-                <LoginContent className="loginContent">
+                <LoginContent>
                     <TextBox
-                        className="textBox"
                         onChange={onChangeLoginInput}
                         type="email"
                         name="email"
@@ -133,7 +97,6 @@ const Login = () => {
                         value={email}
                     />
                     <TextBox
-                        className="textBox"
                         onChange={onChangeLoginInput}
                         type="password"
                         name="password"
@@ -144,9 +107,9 @@ const Login = () => {
                     <LoginButton type="submit">{newAccount ? 'Create Account' : 'Sign In'}</LoginButton>
                 </LoginContent>
             </form>
-            <LoginButtonContainer className="loginButtonContainer">
+            <LoginButtonContainer>
                 <SnsLoginButton
-                    className="button"
+                    color="orange"
                     name="google"
                     icon={<SvgIcon shape="googleLogo" />}
                     onClick={onClickLoginSns}
@@ -154,8 +117,8 @@ const Login = () => {
                     Continue with Google
                 </SnsLoginButton>
                 <SnsLoginButton
+                    color="orange"
                     name="github"
-                    className="button"
                     icon={<SvgIcon shape="github" />}
                     onClick={onClickLoginSns}
                 >
@@ -190,11 +153,6 @@ const SnsLoginButton = styled(Button)(props => ({
     marginLeft: '0.5rem',
     marginRight: '0.5rem',
     boxSizing: 'border-box',
-    backgroundColor: props.theme.colors.tertiary,
-
-    '&:hover': {
-        backgroundColor: props.theme.colors.tertiaryDark,
-    },
 }));
 
 const LoginButton = styled(Button)`
@@ -202,10 +160,6 @@ const LoginButton = styled(Button)`
     width: 100%;
     justify-content: center;
     box-sizing: border-box;
-`;
-
-const ErrorMsg = styled.span`
-    color: ${props => props.theme.colors.warning};
 `;
 
 export default Login;

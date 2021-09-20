@@ -10,22 +10,26 @@ import { ModalActionContext } from '~context/ModalContext';
 import { signOut } from 'firebase/auth';
 
 import { toast } from 'react-toastify';
+import { SpinnerContext } from '~context/SpinnerContext';
 
 const Header = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
 
-    const { openModal, closeModal, setModalProps } = useContext(ModalActionContext);
+    const { closeModal, setModalProps } = useContext(ModalActionContext);
+    const { setSpinnerVisible } = useContext(SpinnerContext);
 
     const logOut = async () => {
-        await signOut(auth)
-            .then(() => {
-                toast('로그아웃 되었습니다.');
-            })
-            .catch(error => {
-                toast.error('로그아웃 중 오류가 발생했습니다.');
-            });
+        setSpinnerVisible(true);
+        try {
+            await signOut(auth);
+            toast('로그아웃 되었습니다.');
+        } catch (error) {
+            toast.error('로그아웃 중 오류가 발생했습니다.');
+        } finally {
+            setSpinnerVisible(false);
+        }
     };
 
     useEffect(() => {
