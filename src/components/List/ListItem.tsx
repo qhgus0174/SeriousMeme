@@ -4,10 +4,13 @@ import TextBox from '~components/Input/TextBox';
 import { deleteDoc, IBoard, updateDoc } from '~firebase/board/board';
 import { AuthContext } from '~context/AuthContext';
 import { css } from '@emotion/react';
+import { deleteAttachmentByUrl } from '~firebase/storage/storage';
+import { ModalActionContext } from '~context/ModalContext';
 
 const ListItem = (items: IBoard) => {
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [newContent, setNewContent] = useState<string>(items.content);
+    const { setModalProps } = useContext(ModalActionContext);
 
     const {
         state: { authUser },
@@ -22,12 +25,24 @@ const ListItem = (items: IBoard) => {
     };
 
     const onClickDelete = async () => {
-        await deleteDoc({ docId: items.docId });
+        setModalProps({
+            isOpen: true,
+            type: 'dialog',
+            content: <>데이터를 삭제하시겠습니까?</>,
+            options: {
+                width: '25',
+                height: '30',
+                confirmFn: async () => {
+                    await deleteDoc(items.docId);
+                    if (items.attatchmentUrl) await deleteAttachmentByUrl(items.attatchmentUrl);
+                },
+            },
+        });
     };
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        await updateDoc({ docId: items.docId, content: newContent });
+        await updateDoc(items.docId, newContent);
         setIsEdit(false);
     };
 
@@ -45,6 +60,14 @@ const ListItem = (items: IBoard) => {
                 </>
             ) : (
                 <>
+                    {items.attatchmentUrl && (
+                        <>
+                            이미지 :
+                            <div>
+                                <img src={items.attatchmentUrl} width="50px" height="50px" />
+                            </div>
+                        </>
+                    )}
                     컨텐츠 :<div> {items.content}</div>
                     이메일 : <div>{items.createUserEmail}</div>
                     {authUser?.uid === items.createUserId && (
