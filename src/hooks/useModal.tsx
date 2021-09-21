@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 export interface IModalOption {
     width?: string;
@@ -19,6 +19,17 @@ export const useModal = () => {
     const [type, setType] = useState<IModalProps['type']>('basic');
     const [content, setContent] = useState<React.ReactElement>(<></>);
     const [options, setOptions] = useState<IModalOption | undefined>({});
+
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.cssText = `overflow: hidden; top: -${window.scrollY}px`;
+            return () => {
+                const scrollY = document.body.style.top;
+                document.body.style.cssText = `overflow: unset; top: "";`;
+                window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            };
+        }
+    }, [isOpen]);
 
     const openModal = () => {
         setIsOpen(true);
