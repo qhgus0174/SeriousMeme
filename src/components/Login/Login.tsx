@@ -10,17 +10,18 @@ import {
     signInWithEmailAndPassword,
     GoogleAuthProvider,
     GithubAuthProvider,
-    signInWithPopup,
+    signInWithRedirect,
 } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { SpinnerContext } from '~context/SpinnerContext';
+import { useHistory } from 'react-router';
 
 const Login = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [newAccount, setNewAccount] = useState<boolean>(false);
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
-
+    const history = useHistory();
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
     const onChangeLoginInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +44,7 @@ const Login = () => {
             newAccount
                 ? await createUserWithEmailAndPassword(auth, email, password)
                 : await signInWithEmailAndPassword(auth, email, password);
+            history.push('/');
         } catch (err: unknown) {
             const { message } = err as Error;
 
@@ -55,6 +57,7 @@ const Login = () => {
             } else if (message.includes('wrong-password')) {
                 toast.error('이메일 또는 아이디가 잘못되었습니다.');
             } else {
+                console.log(message);
                 toast.error('계정 생성 중 오류가 발생했습니다.');
             }
         } finally {
@@ -69,7 +72,8 @@ const Login = () => {
 
         setSpinnerVisible(true);
         try {
-            await signInWithPopup(auth, name === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider());
+            await signInWithRedirect(auth, name === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider());
+            history.push('/');
         } catch {
             toast.error('로그인 중 오류가 발생했습니다.');
         } finally {

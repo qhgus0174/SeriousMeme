@@ -11,12 +11,14 @@ import { signOut } from 'firebase/auth';
 
 import { toast } from 'react-toastify';
 import { SpinnerContext } from '~context/SpinnerContext';
+import { Link, useHistory } from 'react-router-dom';
 
 const Header = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
 
+    const history = useHistory();
     const { closeModal, setModalProps } = useContext(ModalActionContext);
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
@@ -24,6 +26,7 @@ const Header = () => {
         setSpinnerVisible(true);
         try {
             await signOut(auth);
+            history.push('/');
             toast('로그아웃 되었습니다.');
         } catch (error) {
             toast.error('로그아웃 중 오류가 발생했습니다.');
@@ -42,8 +45,17 @@ const Header = () => {
                 <LeftDiv>
                     <SvgIcon shape="star-fill" />
                 </LeftDiv>
-                <CenterDiv>인간극장 짤 생성</CenterDiv>
+                <CenterDiv>
+                    <Link to="/">인간극장 짤 생성</Link>
+                </CenterDiv>
                 <RightDiv>
+                    {authUser?.displayName}
+                    {authUser && (
+                        <Link to="/profile">
+                            <Button icon={<SvgIcon shape="profile" width={22} height={22} color="white" />} />
+                        </Link>
+                    )}
+
                     <Button
                         onClick={() => {
                             authUser
@@ -55,9 +67,14 @@ const Header = () => {
                                       options: { width: '30', height: '80', headerTitle: 'LOGIN' },
                                   });
                         }}
-                    >
-                        {authUser ? '로그아웃' : '로그인'}
-                    </Button>
+                        icon={
+                            authUser ? (
+                                <SvgIcon shape="logout" width={22} height={22} color="white" />
+                            ) : (
+                                <SvgIcon shape="login" width={22} height={22} color="white" />
+                            )
+                        }
+                    ></Button>
                 </RightDiv>
             </HeaderDiv>
         </>
