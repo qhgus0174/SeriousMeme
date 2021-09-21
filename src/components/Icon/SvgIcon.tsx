@@ -1,27 +1,38 @@
 import React from 'react';
-import { ReactComponent as GitHubIcon } from '~assets/svg/github.svg';
-import { ReactComponent as GoogleLogoIcon } from '~assets/svg/google.svg';
+import { ReactComponent as GitHub } from '~assets/svg/github.svg';
+import { ReactComponent as GoogleLogo } from '~assets/svg/google.svg';
 import { ReactComponent as StarEmpty } from '~assets/svg/star-empty.svg';
 import { ReactComponent as StarFill } from '~assets/svg/star-fill.svg';
+import { ReactComponent as Login } from '~assets/svg/login.svg';
+import { ReactComponent as Logout } from '~assets/svg/logout.svg';
+import { ReactComponent as Profile } from '~assets/svg/defaultProfile.svg';
 
 interface ISvg {
-    shape: string;
+    shape: IIconType;
     color?: string;
     width?: number;
     height?: number;
 }
 
-const Svg = ({ shape, color = 'black', width = 32, height = 32 }: ISvg) => {
+type IIconType = 'github' | 'googleLogo' | 'star-empty' | 'star-fill' | 'login' | 'logout' | 'profile';
+
+const Svg = ({ shape, color = 'black', width = 28, height = 28 }: ISvg) => {
     const icon = () => {
         switch (shape) {
             case 'github':
-                return <GitHubIcon fill={color} width={width} height={height} />;
+                return <GitHub fill={color} width={width} height={height} />;
             case 'googleLogo':
-                return <GoogleLogoIcon fill={color} width={width} height={height} />;
+                return <GoogleLogo fill={color} width={width} height={height} />;
             case 'star-empty':
                 return <StarEmpty fill={color} width={width} height={height} />;
             case 'star-fill':
                 return <StarFill fill={color} width={width} height={height} />;
+            case 'login':
+                return <Login fill={color} width={width} height={height} />;
+            case 'logout':
+                return <Logout fill={color} width={width} height={height} />;
+            case 'profile':
+                return <Profile fill={color} width={width} height={height} />;
             default:
                 return <></>;
         }
