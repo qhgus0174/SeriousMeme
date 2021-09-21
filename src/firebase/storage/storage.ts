@@ -8,10 +8,14 @@ import {
 import { storage } from '~firebase/firebaseInstance';
 import { v4 as uuidV4 } from 'uuid';
 
-const storageRef = (userId: string) => fbRef(storage, `${userId}/${uuidV4()}`);
+const basicStorageRef = (userId: string) => fbRef(storage, `board/${userId}/${uuidV4()}`);
+const profileStorageRef = (userId: string) => fbRef(storage, `profile/${userId}`);
 
-export const uploadByAttachmentUrl = async (userId: string, attachmentUrl: string) =>
-    await fbUploadString(storageRef(userId), attachmentUrl, 'data_url');
+export const uploadByAttachmentUrlBoard = async (userId: string, attachmentUrl: string) =>
+    await fbUploadString(basicStorageRef(userId), attachmentUrl, 'data_url');
+
+export const uploadByAttachmentUrlProfile = async (userId: string, attachmentUrl: string) =>
+    await fbUploadString(profileStorageRef(userId), attachmentUrl, 'data_url');
 
 export const getDownloadURL = async (ref: StorageReference) => fbGetDownloadURL(ref);
 

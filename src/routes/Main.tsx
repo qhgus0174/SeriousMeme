@@ -7,7 +7,7 @@ import ListItem from '~components/List/ListItem';
 
 import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import { SpinnerContext } from '~context/SpinnerContext';
-import { uploadByAttachmentUrl } from '~firebase/storage/storage';
+import { uploadByAttachmentUrlBoard } from '~firebase/storage/storage';
 import { getDownloadURL } from '@firebase/storage';
 
 const Main = () => {
@@ -44,7 +44,7 @@ const Main = () => {
             let attatchmentUrl: string | null = null;
 
             if (attachment) {
-                const res = await uploadByAttachmentUrl(authUser ? authUser.uid : 'anonymous', attachment);
+                const res = await uploadByAttachmentUrlBoard(authUser ? authUser.uid : 'anonymous', attachment);
                 attatchmentUrl = await getDownloadURL(res.ref);
             }
 
@@ -73,7 +73,7 @@ const Main = () => {
         if (name === 'content') setContent(value);
     };
 
-    const onClickFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {
             target: { files },
         } = event;
@@ -107,7 +107,7 @@ const Main = () => {
                         <Button onClick={() => setAttachment(null)}>Clear</Button>
                     </div>
                 )}
-                <input type="file" accept="image/*" onChange={onClickFile} />
+                <input type="file" accept="image/*" onChange={onChangeFile} />
 
                 <Button type="submit">Go</Button>
             </form>
