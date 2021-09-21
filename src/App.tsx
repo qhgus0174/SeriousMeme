@@ -3,7 +3,6 @@ import AppRouter from 'Router';
 import { GlobalStyle } from '~styles/global-styles';
 import { basic } from '~styles/theme';
 import AuthContext from '~context/AuthContext';
-import ModalContext from '~context/ModalContext';
 import SpinnerContext from '~context/SpinnerContext';
 import { Flip, ToastContainer } from 'react-toastify';
 import { ThemeProvider } from '@emotion/react';
@@ -15,9 +14,7 @@ const App = () => {
             <GlobalStyle />
             <SpinnerContext>
                 <AuthContext>
-                    <ModalContext>
-                        <AppRouter />
-                    </ModalContext>
+                    <AppRouter />
                 </AuthContext>
             </SpinnerContext>
             <ToastContainer
