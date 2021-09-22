@@ -9,7 +9,8 @@
             "~context/*": ["context/*"],
             "~firebase/*": ["firebase/*"],
             "~hooks/*": ["hooks/*"],
-            "~styles/*": ["styles/*"]
+            "~styles/*": ["styles/*"],
+            "~utils/*": ["utils/*"]
         },
 
         "removeComments": true,
