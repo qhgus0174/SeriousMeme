@@ -6,23 +6,17 @@ import { AuthContext } from '~context/AuthContext';
 import { css } from '@emotion/react';
 import { deleteAttachmentByUrl } from '~firebase/storage/storage';
 import { ModalActionContext } from '~context/ModalContext';
+import { useInput } from '~hooks/useInput';
 
 const ListItem = (items: IBoard) => {
     const [isEdit, setIsEdit] = useState<boolean>(false);
-    const [newContent, setNewContent] = useState<string>(items.content);
+    const [newContent, bindNewContent] = useInput<string>(items.content);
+
     const { setModalProps } = useContext(ModalActionContext);
 
     const {
         state: { authUser },
     } = useContext(AuthContext);
-
-    const onChangeEditBox = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {
-            target: { name, value },
-        } = event;
-
-        setNewContent(value);
-    };
 
     const onClickDelete = async () => {
         setModalProps({
@@ -51,7 +45,7 @@ const ListItem = (items: IBoard) => {
             {isEdit ? (
                 <>
                     <form onSubmit={onSubmit}>
-                        <TextBox value={newContent} onChange={onChangeEditBox} />
+                        <TextBox {...bindNewContent} />
                         <Button type="submit">수정</Button>
                         <Button type="button" onClick={() => setIsEdit(false)}>
                             취소
@@ -64,7 +58,7 @@ const ListItem = (items: IBoard) => {
                         <>
                             이미지 :
                             <div>
-                                <img src={items.attatchmentUrl} width="50px" height="50px" />
+                                <img src={items.attatchmentUrl} width="300px" height="200px" />
                             </div>
                         </>
                     )}

@@ -15,25 +15,16 @@ import {
 import { toast } from 'react-toastify';
 import { SpinnerContext } from '~context/SpinnerContext';
 import { useHistory } from 'react-router';
+import { useInput } from '~hooks/useInput';
 
 const Login = () => {
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
     const [newAccount, setNewAccount] = useState<boolean>(false);
     const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
     const history = useHistory();
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
-    const onChangeLoginInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {
-            target: { value, name },
-        } = event;
-        if (name == 'email') {
-            setEmail(value);
-        } else if (name == 'password') {
-            setPassword(value);
-        }
-    };
+    const [email, bindEmail] = useInput<string>('');
+    const [password, bindPassword] = useInput<string>('');
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -92,22 +83,8 @@ const Login = () => {
 
             <form onSubmit={onSubmit}>
                 <LoginContent>
-                    <TextBox
-                        onChange={onChangeLoginInput}
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        required
-                        value={email}
-                    />
-                    <TextBox
-                        onChange={onChangeLoginInput}
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        required
-                        value={password}
-                    />
+                    <TextBox {...bindEmail} type="email" placeholder="Email" required />
+                    <TextBox {...bindPassword} type="password" placeholder="Password" required />
                     <LoginButton type="submit">{newAccount ? 'Create Account' : 'Sign In'}</LoginButton>
                 </LoginContent>
             </form>

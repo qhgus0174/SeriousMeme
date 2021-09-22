@@ -11,15 +11,15 @@ import { SpinnerContext } from '~context/SpinnerContext';
 import { uploadByAttachmentUrlProfile } from '~firebase/storage/storage';
 import { getDownloadURL } from 'firebase/storage';
 import SvgIcon from '~components/Icon/SvgIcon';
+import { useInput } from '~hooks/useInput';
 
 const Profile = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
     const [contentList, setContentList] = useState<IBoard[]>([]);
-    const [newDisplayName, setNewDisplayName] = useState<string | null>(authUser!.displayName);
+    const [newDisplayName, bindNewDisplayName] = useInput<string | null>(authUser!.displayName);
     const [newPhotoUrl, setNewPhotoUrl] = useState<string | null>(authUser!.photoURL);
-
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
     useEffect(() => {
@@ -60,14 +60,6 @@ const Profile = () => {
         }
     };
 
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {
-            target: { value },
-        } = event;
-
-        setNewDisplayName(value);
-    };
-
     const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {
             target: { files },
@@ -96,9 +88,8 @@ const Profile = () => {
                 ) : (
                     <SvgIcon shape="profile" />
                 )}
-                <div>{newPhotoUrl}</div>
                 <input type="file" accept="image/*" onChange={onChangeFile} />
-                <TextBox value={newDisplayName ? newDisplayName : ''} onChange={onChange} />
+                <TextBox {...bindNewDisplayName} />
                 <Button>프로필 변경</Button>
             </form>
             {contentList.map((content: IBoard) => {
