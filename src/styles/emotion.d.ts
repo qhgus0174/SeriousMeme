@@ -4,30 +4,15 @@ declare module '@emotion/react' {
     export interface Theme {
         colors: {
             mainBackground: string;
+            main: string;
             white: string;
             black: string;
-            primary: string;
-            primaryDark: string;
-            secondary: string;
-            secondaryDark: string;
-            tertiary: string;
-            tertiaryDark: string;
-            success: string;
-            info: string;
-            warning: string;
-            error: string;
-        };
-        buttonColors: {
-            basic: string;
-            cancel: string;
-            orange: string;
         };
 
-        buttonColorsHover: {
-            basic: string;
-            cancel: string;
-            orange: string;
+        buttonColors: {
+            none: string;
         };
+
         // mode: {
         //     mainBackground: string;
         //     primaryText: string;
