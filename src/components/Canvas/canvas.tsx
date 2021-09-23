@@ -132,16 +132,16 @@ const Canvas = ({ imageUrl, text, setNewAttachment }: ICanvas) => {
             },
         } = text;
 
-        const canvasCenter = canvas.width / 2;
+        const canvasCenterAround = canvas.width / 2 + 10;
 
-        canvasCtx.font = '26px NanumMyeongjo';
-        styleText(name, calcSpace(canvasCenter, name, -1), 280);
+        canvasCtx.font = '25px NanumMyeongjo';
+        styleText(name, calcSpace(canvasCenterAround, name, -1, 15.5), 280);
 
         if (jobVisible) {
-            jobName && styleText('/', canvasCenter, 280);
+            jobName && styleText('/', canvasCenterAround, 280);
 
             canvasCtx.font = '21px NanumMyeongjo';
-            styleText(jobName, calcSpace(canvasCenter, jobName, 1), 280);
+            styleText(jobName, calcSpace(canvasCenterAround, jobName, 1, 13.5), 280);
         }
     };
 
@@ -155,7 +155,7 @@ const Canvas = ({ imageUrl, text, setNewAttachment }: ICanvas) => {
                 },
             },
         } = text;
-
+        canvasCtx.font = '22px NanumMyeongjo';
         styleText(topText, canvas.width / 2, 320, isQuestion);
         styleText(bottomText, canvas.width / 2, 355);
     };
@@ -172,12 +172,12 @@ const Canvas = ({ imageUrl, text, setNewAttachment }: ICanvas) => {
         canvasCtx.fillText(text, x, y);
     };
 
-    const calcSpace = (bench: number, text: string, operator: 1 | -1) => {
+    const calcSpace = (bench: number, text: string, operator: 1 | -1, spaceWith: number) => {
         const onlyTextLength = text.replace(/[~!@#$%^&*()_+|<>?:{}. 0-9]/gi, '').length;
 
         const containNumberArr = text.match(/[0-9]/gi);
         const numberLength = containNumberArr ? containNumberArr.length / 1.7 : 0;
-        const textLength = bench + (onlyTextLength + numberLength) * 15 * operator;
+        const textLength = bench + (onlyTextLength + numberLength) * operator * spaceWith;
 
         return textLength;
     };
