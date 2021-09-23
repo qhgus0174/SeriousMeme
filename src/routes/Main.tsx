@@ -25,14 +25,22 @@ const Main = () => {
 
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
-    const [day, bindDay] = useInput<string>(nowDay, { numberOnly: true, maxLength: 2 });
-    const [dayOfWeek, bindDayOfWeek] = useInput<string>(nowDayOfWeek, { maxLength: 1 });
-    const [time, bindTime] = useInput<string>(nowDateTime, { maxLength: 2 });
-    const [title, bindTitle] = useInput<string>('');
-    const [name, bindName] = useInput<string>('', { maxLength: 20 });
-    const [job, bindJob] = useInput<string>('', { maxLength: 15 });
-    const [speechTop, bindSpeechTop] = useInput<string>('', { maxLength: 26 });
-    const [speechBottom, bindSpeechBottom] = useInput<string>('', { maxLength: 26 });
+    interface IFormState {
+        [key: string]: string;
+    }
+
+    const initialState: IFormState = {
+        day: nowDay,
+        dayOfWeek: nowDayOfWeek,
+        time: nowDateTime,
+        title: '',
+        name: '',
+        job: '',
+        speechTop: '',
+        speechBottom: '',
+    };
+    const [{ day, dayOfWeek, time, title, name, job, speechTop, speechBottom }, setState] =
+        useState<IFormState>(initialState);
 
     const [visibleTime, bindVisibleTime] = useCheckbox(true);
     const [visibleJob, bindVisibleJob] = useCheckbox(true);
@@ -77,6 +85,7 @@ const Main = () => {
             });
             setAttachment('');
             setNewAttachment('');
+            clearState();
             if (imageInputRef.current) imageInputRef.current.value = '';
         } catch (error) {
             console.log(error);
@@ -105,6 +114,17 @@ const Main = () => {
         };
     };
 
+    const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {
+            target: { name, value },
+        } = e;
+        setState(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const clearState = () => {
+        setState({ ...initialState });
+    };
+
     return (
         <>
             <form onSubmit={addPost}>
@@ -126,17 +146,11 @@ const Main = () => {
                     }}
                     setNewAttachment={setNewAttachment}
                 />
-                {/* {attachment && (
-                    <div>
-                        <img src={attachment} width="30%" height="30%" />
-                        <Button onClick={() => setAttachment('')}>Clear</Button>
-                    </div>
-                )} */}
                 <div>
                     <input type="file" accept="image/*" onChange={onChangeFile} ref={imageInputRef} />
                 </div>
                 <div>
-                    작품 명 : <TextBox {...bindTitle} />
+                    작품 명 : <TextBox name="title" value={title} onChange={onChangeInput} />
                 </div>
                 <div
                     css={css`
@@ -147,13 +161,24 @@ const Main = () => {
                         <input type="checkbox" {...bindVisibleTime} /> 시계 보이기
                     </label>
                     <div>
-                        날짜 : <TextBox {...bindDay} />
+                        날짜 :{' '}
+                        <TextBox
+                            name="day"
+                            value={day}
+                            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                if (!/[0-9]/.test(e.key)) {
+                                    e.preventDefault();
+                                }
+                            }}
+                            onChange={onChangeInput}
+                            maxLength={2}
+                        />
                     </div>
                     <div>
-                        요일 : <TextBox {...bindDayOfWeek} />
+                        요일 : <TextBox name="dayOfWeek" value={dayOfWeek} onChange={onChangeInput} maxLength={1} />
                     </div>
                     <div>
-                        시간 : <TextBox {...bindTime} />
+                        시간 : <TextBox name="time" value={time} onChange={onChangeInput} maxLength={2} />
                     </div>
                 </div>
                 <div
@@ -162,22 +187,23 @@ const Main = () => {
                     `}
                 >
                     <div>
-                        이름(나이) : <TextBox {...bindName} />
+                        이름(나이) : <TextBox name="name" value={name} onChange={onChangeInput} maxLength={20} />
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" {...bindVisibleJob} />
+                            <input type="checkbox" {...bindVisibleJob} maxLength={15} />
                             직업 :
                         </label>
-                        <TextBox {...bindJob} />
+                        <TextBox name="job" value={job} onChange={onChangeInput} />
                     </div>
                     <div>
-                        대사1 : <TextBox {...bindSpeechTop} />
+                        대사1 : <TextBox name="speechTop" value={speechTop} onChange={onChangeInput} maxLength={26} />
                         <label>
                             <input type="checkbox" {...bindSpeechIsQuestion} /> 질문인가요?
                         </label>
                         <br />
-                        대사2 : <TextBox {...bindSpeechBottom} />
+                        대사2 :{' '}
+                        <TextBox name="speechBottom" value={speechBottom} onChange={onChangeInput} maxLength={26} />
                     </div>
                 </div>
                 <Button type="submit">Go</Button>
