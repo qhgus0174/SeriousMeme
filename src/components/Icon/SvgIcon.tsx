@@ -6,6 +6,8 @@ import { ReactComponent as StarFill } from '~assets/svg/star-fill.svg';
 import { ReactComponent as Login } from '~assets/svg/login.svg';
 import { ReactComponent as Logout } from '~assets/svg/logout.svg';
 import { ReactComponent as Profile } from '~assets/svg/defaultProfile.svg';
+import { ReactComponent as Home } from '~assets/svg/home.svg';
+import { ReactComponent as Download } from '~assets/svg/download.svg';
 
 interface ISvg {
     shape: IIconType;
@@ -14,9 +16,18 @@ interface ISvg {
     height?: number;
 }
 
-type IIconType = 'github' | 'googleLogo' | 'star-empty' | 'star-fill' | 'login' | 'logout' | 'profile';
+type IIconType =
+    | 'github'
+    | 'googleLogo'
+    | 'star-empty'
+    | 'star-fill'
+    | 'login'
+    | 'logout'
+    | 'profile'
+    | 'home'
+    | 'download';
 
-const Svg = ({ shape, color = 'black', width = 28, height = 28 }: ISvg) => {
+const Svg = ({ shape, color = 'black', width = 40, height = 40 }: ISvg) => {
     const icon = () => {
         switch (shape) {
             case 'github':
@@ -33,6 +44,10 @@ const Svg = ({ shape, color = 'black', width = 28, height = 28 }: ISvg) => {
                 return <Logout fill={color} width={width} height={height} />;
             case 'profile':
                 return <Profile fill={color} width={width} height={height} />;
+            case 'home':
+                return <Home fill={color} width={width} height={height} />;
+            case 'download':
+                return <Download fill={color} width={width} height={height} />;
             default:
                 return <></>;
         }
