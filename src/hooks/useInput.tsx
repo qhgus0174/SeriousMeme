@@ -10,7 +10,7 @@ export function useInput<T>(
         numberOnly?: boolean;
         maxLength?: number;
     },
-): [T, any, React.Dispatch<React.SetStateAction<T>>] {
+): [T, any, () => void] {
     const [value, setValue] = useState<T>(initialValue);
 
     const reset = useCallback(() => setValue(initialValue), [initialValue]);
