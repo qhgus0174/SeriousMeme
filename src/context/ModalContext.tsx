@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React, { createContext, useEffect } from 'react';
 import { IModalProps, useModal } from '~hooks/useModal';
 import ModalPortal from '~components/Modal/ModalPortal';
 
