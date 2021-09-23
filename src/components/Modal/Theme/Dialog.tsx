@@ -24,9 +24,7 @@ const Dialog = ({ children, options }: IModal) => {
                 >
                     확인
                 </Button>
-                <Button onClick={closeModal} color="cancel">
-                    취소
-                </Button>
+                <Button onClick={closeModal}>취소</Button>
             </DialogBottom>
         </>
     );

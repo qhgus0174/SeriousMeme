@@ -23,12 +23,7 @@ const Tab = ({ titles, currIndex, onClickTab }: ITab) => {
                             padding-bottom: 0.4rem;
                             cursor: pointer;
                             ${currIndex == index &&
-                            `color: ${theme.colors.primary}; border-bottom: 4px solid ${theme.colors.primary};`};
-
-                            &:hover {
-                                backgroud: ${theme.colors.primaryDark};
-                                color: ${theme.colors.primaryDark};
-                            }
+                            `color: ${theme.colors.main}; border-bottom: 4px solid ${theme.colors.main};`};
                         `}
                         onClick={() => onClickTab(index)}
                     >

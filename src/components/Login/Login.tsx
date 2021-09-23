@@ -89,20 +89,10 @@ const Login = () => {
                 </LoginContent>
             </form>
             <LoginButtonContainer>
-                <SnsLoginButton
-                    color="orange"
-                    name="google"
-                    icon={<SvgIcon shape="googleLogo" />}
-                    onClick={onClickLoginSns}
-                >
+                <SnsLoginButton name="google" icon={<SvgIcon shape="googleLogo" />} onClick={onClickLoginSns}>
                     Continue with Google
                 </SnsLoginButton>
-                <SnsLoginButton
-                    color="orange"
-                    name="github"
-                    icon={<SvgIcon shape="github" />}
-                    onClick={onClickLoginSns}
-                >
+                <SnsLoginButton name="github" icon={<SvgIcon shape="github" />} onClick={onClickLoginSns}>
                     Continue with Github
                 </SnsLoginButton>
             </LoginButtonContainer>
@@ -121,6 +111,7 @@ const LoginContent = styled.div`
     flex-direction: column;
     width: 100%;
     align-items: center;
+    padding-top: 1em;
 `;
 
 const LoginButtonContainer = styled.div`
@@ -130,17 +121,15 @@ const LoginButtonContainer = styled.div`
     justify-content: center;
 `;
 
-const SnsLoginButton = styled(Button)(props => ({
-    marginLeft: '0.5rem',
-    marginRight: '0.5rem',
-    boxSizing: 'border-box',
-}));
+const SnsLoginButton = styled(Button)`
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+`;
 
 const LoginButton = styled(Button)`
     margin-top: 0.5rem;
     width: 100%;
     justify-content: center;
-    box-sizing: border-box;
 `;
 
 export default Login;

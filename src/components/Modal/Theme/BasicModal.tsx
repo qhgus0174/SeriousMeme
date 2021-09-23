@@ -8,9 +8,7 @@ const BasicModal = ({ children, options }: IModal) => {
     return (
         <>
             {options?.headerTitle && <ModalHeader>{options.headerTitle}</ModalHeader>}
-            <ModalBody>
-                <ModalContent>{children}</ModalContent>
-            </ModalBody>
+            <ModalContent>{children}</ModalContent>
         </>
     );
 };
@@ -25,14 +23,11 @@ const ModalHeader = styled.div`
     box-sizing: border-box;
 `;
 
-//body영역은 내용에 스크롤이 발생 할 수 있기 때문에 좀 더 세분화
-const ModalBody = styled.div`
-    box-sizing: border-box;
-`;
-
 const ModalContent = styled.div`
-    padding: 30px;
+    padding: 2.2rem;
     box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto;
 `;
 
 export default BasicModal;

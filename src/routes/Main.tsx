@@ -3,6 +3,7 @@ import { AuthContext } from '~context/AuthContext';
 import { SpinnerContext } from '~context/SpinnerContext';
 import Button from '~components/Button/Button';
 import TextBox from '~components/Input/TextBox';
+import LabelText from '~components/Input/LabelText';
 import ListItem from '~components/List/ListItem';
 import Canvas from '~components/Canvas/canvas';
 
@@ -17,6 +18,7 @@ import { useInput } from '~hooks/useInput';
 import { useCheckbox } from '~hooks/useCheckbox';
 
 import { nowDateTime, nowDay, nowDayOfWeek } from '~utils/luxon';
+import styled from '@emotion/styled';
 
 const Main = () => {
     const {
@@ -126,8 +128,9 @@ const Main = () => {
     };
 
     return (
-        <>
-            <form onSubmit={addPost}>
+        <MainDiv>
+            <CanvasForm onSubmit={addPost}>
+                <H2>인간극장 짤 생성기</H2>
                 <Canvas
                     imageUrl={attachment}
                     text={{
@@ -145,84 +148,119 @@ const Main = () => {
                         },
                     }}
                     setNewAttachment={setNewAttachment}
+                    triggerFileFunc={() => imageInputRef.current?.click()}
                 />
-                <div>
-                    <input type="file" accept="image/*" onChange={onChangeFile} ref={imageInputRef} />
-                </div>
-                <div>
-                    작품 명 : <TextBox name="title" value={title} onChange={onChangeInput} />
-                </div>
-                <div
+                <input
                     css={css`
-                        padding: 1em;
+                        display: none;
                     `}
-                >
-                    <label>
-                        <input type="checkbox" {...bindVisibleTime} /> 시계 보이기
-                    </label>
-                    <div>
-                        날짜 :{' '}
-                        <TextBox
-                            name="day"
-                            value={day}
-                            onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                                if (!/[0-9]/.test(e.key)) {
-                                    e.preventDefault();
-                                }
-                            }}
-                            onChange={onChangeInput}
-                            maxLength={2}
-                        />
-                    </div>
-                    <div>
-                        요일 : <TextBox name="dayOfWeek" value={dayOfWeek} onChange={onChangeInput} maxLength={1} />
-                    </div>
-                    <div>
-                        시간 : <TextBox name="time" value={time} onChange={onChangeInput} maxLength={2} />
-                    </div>
-                </div>
-                <div
-                    css={css`
-                        padding: 1em;
-                    `}
-                >
-                    <div>
-                        이름(나이) : <TextBox name="name" value={name} onChange={onChangeInput} maxLength={20} />
-                    </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" {...bindVisibleJob} maxLength={15} />
-                            직업 :
-                        </label>
-                        <TextBox name="job" value={job} onChange={onChangeInput} />
-                    </div>
-                    <div>
-                        대사1 : <TextBox name="speechTop" value={speechTop} onChange={onChangeInput} maxLength={26} />
-                        <label>
-                            <input type="checkbox" {...bindSpeechIsQuestion} /> 질문인가요?
-                        </label>
-                        <br />
-                        대사2 :{' '}
-                        <TextBox name="speechBottom" value={speechBottom} onChange={onChangeInput} maxLength={26} />
-                    </div>
-                </div>
-                <Button type="submit">Go</Button>
-            </form>
-            {contentList.map((content: IBoard) => {
-                return (
-                    <ListItem
-                        key={content.docId}
-                        docId={content.docId}
-                        content={content.content}
-                        createAt={content.createAt}
-                        createUserId={content.createUserId}
-                        createUserEmail={content.createUserEmail}
-                        attatchmentUrl={content.attatchmentUrl}
+                    type="file"
+                    accept="image/*"
+                    onChange={onChangeFile}
+                    ref={imageInputRef}
+                />
+                <ClockDiv>
+                    <input type="checkbox" {...bindVisibleTime} />
+                    <LabelText
+                        label="날짜"
+                        name="day"
+                        value={day}
+                        onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                            if (!/[0-9]/.test(e.key)) {
+                                e.preventDefault();
+                            }
+                        }}
+                        onChange={onChangeInput}
+                        maxLength={2}
                     />
-                );
-            })}
-        </>
+                    <LabelText label="요일" name="dayOfWeek" value={dayOfWeek} onChange={onChangeInput} maxLength={1} />
+                    <LabelText label="시간" name="time" value={time} onChange={onChangeInput} maxLength={2} />
+                </ClockDiv>
+                <SpeechDiv>
+                    <LabelText label="이름(나이)" name="name" value={name} onChange={onChangeInput} maxLength={20} />
+                    <input type="checkbox" {...bindVisibleJob} maxLength={15} />
+                    <LabelText label="직업" name="job" value={job} onChange={onChangeInput} />
+                </SpeechDiv>
+                <SpeechDiv>
+                    <input type="checkbox" {...bindSpeechIsQuestion} /> 질문인가요?
+                    <LabelText
+                        label="대사1"
+                        name="speechTop"
+                        value={speechTop}
+                        onChange={onChangeInput}
+                        maxLength={26}
+                    />
+                </SpeechDiv>
+                <SpeechDiv>
+                    <LabelText
+                        label="대사2"
+                        name="speechBottom"
+                        value={speechBottom}
+                        onChange={onChangeInput}
+                        maxLength={26}
+                    />
+                </SpeechDiv>
+                <SubmitDiv>
+                    <LabelText label="작품 명" name="title" value={title} onChange={onChangeInput} />
+                    <Button type="submit">Go</Button>
+                </SubmitDiv>
+            </CanvasForm>
+            <ListDiv>
+                {contentList.map((content: IBoard) => {
+                    return (
+                        <ListItem
+                            key={content.docId}
+                            docId={content.docId}
+                            content={content.content}
+                            createAt={content.createAt}
+                            createUserId={content.createUserId}
+                            createUserEmail={content.createUserEmail}
+                            attatchmentUrl={content.attatchmentUrl}
+                        />
+                    );
+                })}
+            </ListDiv>
+        </MainDiv>
     );
 };
+
+const MainDiv = styled.div`
+    display: flex;
+    justify-content: space-evenly;
+`;
+const CanvasForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    flex-basis: 50%;
+    align-items: center;
+    padding: 0em 3em 0em 3em;
+`;
+const ListDiv = styled.div`
+    display: flex;
+    justify-content: center;
+    flex-basis: 50%;
+`;
+
+const H2 = styled.h2`
+    text-align: center;
+`;
+
+const ClockDiv = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+`;
+
+const SpeechDiv = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+`;
+
+const SubmitDiv = styled.div`
+    display: flex;
+    align-items: center;
+    width: 100%;
+`;
 
 export default Main;
