@@ -10,12 +10,10 @@ export const GlobalStyle = () => {
                 * {
                     margin: 0;
                     color: ${theme.colors.white};
-
                     font-family: 'Spoqa Han Sans Neo', 'sans-serif';
                 }
 
-                body,
-                body div {
+                body {
                     background-color: ${theme.colors.mainBackground};
                 }
 

@@ -5,12 +5,16 @@ declare module '@emotion/react' {
         colors: {
             mainBackground: string;
             main: string;
+            main2: string;
+            mainLignt: string;
             white: string;
             black: string;
+            gray: string;
         };
 
         buttonColors: {
             none: string;
+            main: string;
         };
 
         // mode: {
