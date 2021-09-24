@@ -5,13 +5,18 @@ import { ReactComponent as StarEmpty } from '~assets/svg/star-empty.svg';
 import { ReactComponent as StarFill } from '~assets/svg/star-fill.svg';
 import { ReactComponent as Login } from '~assets/svg/login.svg';
 import { ReactComponent as Logout } from '~assets/svg/logout.svg';
-import { ReactComponent as Profile } from '~assets/svg/defaultProfile.svg';
+import { ReactComponent as Profile } from '~assets/svg/profile.svg';
 import { ReactComponent as Home } from '~assets/svg/home.svg';
 import { ReactComponent as Download } from '~assets/svg/download.svg';
+import { ReactComponent as DefaultUser } from '~assets/svg/defaultUser.svg';
+import { ReactComponent as Trash } from '~assets/svg/trash.svg';
+import { ReactComponent as ArrowDown } from '~assets/svg/arrow-down.svg';
+import { ReactComponent as ArrowUp } from '~assets/svg/arrow-up.svg';
+import { Theme } from '@emotion/react';
 
 interface ISvg {
     shape: IIconType;
-    color?: string;
+    color?: keyof Theme['colors'];
     width?: number;
     height?: number;
 }
@@ -25,9 +30,13 @@ type IIconType =
     | 'logout'
     | 'profile'
     | 'home'
-    | 'download';
+    | 'download'
+    | 'defaultUser'
+    | 'trash'
+    | 'arrow-down'
+    | 'arrow-up';
 
-const Svg = ({ shape, color = 'black', width = 40, height = 40 }: ISvg) => {
+const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
     const icon = () => {
         switch (shape) {
             case 'github':
@@ -48,6 +57,14 @@ const Svg = ({ shape, color = 'black', width = 40, height = 40 }: ISvg) => {
                 return <Home fill={color} width={width} height={height} />;
             case 'download':
                 return <Download fill={color} width={width} height={height} />;
+            case 'defaultUser':
+                return <DefaultUser fill={color} width={width} height={height} />;
+            case 'trash':
+                return <Trash fill={color} width={width} height={height} />;
+            case 'arrow-down':
+                return <ArrowDown fill={color} width={width} height={height} />;
+            case 'arrow-up':
+                return <ArrowUp fill={color} width={width} height={height} />;
             default:
                 return <></>;
         }
