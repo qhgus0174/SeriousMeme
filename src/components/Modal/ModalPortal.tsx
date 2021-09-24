@@ -69,12 +69,12 @@ const ModalDimmer = styled.div`
 
 const ModalInner = styled.div<Pick<IModalOption, 'width' | 'height'> & Pick<IModalProps, 'type'>>`
     box-sizing: border-box;
-    background-color: white;
     border-radius: 4px;
     overflow: hidden; //각을 없앴을 때 내부 영역이 튀어나오는걸 방지
     outline: none;
     box-shadow: 5px 10px 10px 1px rgba(0, 0, 0, 0.3);
     width: 100%;
+    background-color: ${props => props.theme.colors.mainBackground};
     ${props => {
         switch (props.type) {
             case 'basic':

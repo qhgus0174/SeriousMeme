@@ -14,7 +14,7 @@ const Spinner = () => {
 
     return (
         <LoadingContainer spinnerVisible={spinnerVisible}>
-            <PuffLoader color={theme.colors.primaryDark} />
+            <PuffLoader color={theme.colors.main} />
         </LoadingContainer>
     );
 };

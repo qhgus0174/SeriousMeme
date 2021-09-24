@@ -23,7 +23,7 @@ const Button = ({ children, icon, color = 'none', ...rest }: IButtonProps) => {
 
 const BasicButton = styled.button<IButtonProps>`
     box-sizing: border-box;
-    border: 1px solid white;
+    border: 1px solid ${props => props.theme.colors.white};
     outline: 0;
     text-align: center;
     padding: 0.6rem 1.1rem;
@@ -34,11 +34,12 @@ const BasicButton = styled.button<IButtonProps>`
     img {
         align-items: center;
         pointer-events: none;
-        margin-right: 0.7em;
     }
     span {
         pointer-events: none;
+        margin-left: ${props => (props.icon ? 0.5 : 0)}em;
     }
+
     color: ${props => props.theme.colors.white};
 
     ${props => `

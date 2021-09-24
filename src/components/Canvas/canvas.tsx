@@ -2,9 +2,11 @@ import React, { CanvasHTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled';
 import { nowDateToMillis } from '~utils/luxon';
 import { media } from '~styles/device';
+import Button from '~components/Button/Button';
+import SvgIcon from '~components/Icon/SvgIcon';
+import { css } from '@emotion/react';
 
 interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
-    imageUrl: string;
     text: {
         clock: {
             visible: boolean;
@@ -34,22 +36,25 @@ interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
         };
     };
     setNewAttachment: (e: string) => void;
+    triggerFileFunc?: () => void;
 }
 
-const Canvas = ({ imageUrl, text, setNewAttachment }: ICanvas) => {
+const Canvas = ({ text, setNewAttachment, triggerFileFunc }: ICanvas) => {
     const maxWidth = 600;
     const maxHeight = 400;
 
     const [downloadUrl, setDownloadUrl] = useState<string>('');
 
-    const [backgroundImage, setBackgroundImage] = useState<string>('');
-
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();
     const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D | null | undefined>();
 
+    const [attachment, setAttachment] = useState<string>('');
+
+    const imageInputRef = useRef<HTMLInputElement>(null);
+
     useEffect(() => {
-        setBackgroundImage(imageUrl);
+        //setBackgroundImage(imageUrl);
         setCanvas(canvasRef.current);
         setCanvasCtx(canvasRef.current?.getContext('2d'));
 
@@ -59,10 +64,10 @@ const Canvas = ({ imageUrl, text, setNewAttachment }: ICanvas) => {
     const initCanvas = () => {
         if (!canvas || !canvasCtx) return;
 
-        if (!backgroundImage) clearCanvas();
+        if (!attachment) clearCanvas();
 
         const bgImage = new Image();
-        bgImage.src = backgroundImage;
+        bgImage.src = attachment;
 
         bgImage.onload = function () {
             drawImage(bgImage);
@@ -79,7 +84,7 @@ const Canvas = ({ imageUrl, text, setNewAttachment }: ICanvas) => {
 
     const drawImage = (bgImage: HTMLImageElement) => {
         if (!canvas || !canvasCtx) return;
-
+        clearCanvas();
         const width = bgImage.width > bgImage.height ? maxWidth : (bgImage.width * maxWidth) / bgImage.height;
         const height = bgImage.width > bgImage.height ? (bgImage.height * maxWidth) / bgImage.width : maxHeight;
         canvasCtx.drawImage(bgImage, 0, 0, width, height);
@@ -199,18 +204,64 @@ const Canvas = ({ imageUrl, text, setNewAttachment }: ICanvas) => {
         document.body.removeChild(a);
     };
 
+    const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const {
+            target: { files },
+        } = event;
+
+        if (!files) return;
+        const file = files[0];
+        const reader = new FileReader();
+
+        if (!file) return;
+        reader.readAsDataURL(file);
+
+        reader.onloadend = () => {
+            const renderResult = reader.result;
+            if (renderResult instanceof ArrayBuffer || renderResult == null) return;
+            setAttachment(renderResult);
+        };
+    };
+
     return (
-        <>
-            <CustomCanvas width={maxWidth} height={maxHeight} ref={canvasRef} />
-            <a onClick={onClickDownload}>바로 다운로드</a>
-        </>
+        <CanvasContainer>
+            <DownloadButton icon={<SvgIcon shape="download" width={20} height={20} />} onClick={onClickDownload}>
+                다운로드
+            </DownloadButton>
+            <CustomCanvas
+                onClick={() => imageInputRef.current?.click()}
+                width={maxWidth}
+                height={maxHeight}
+                ref={canvasRef}
+            />
+            <input
+                css={css`
+                    display: none;
+                `}
+                type="file"
+                accept="image/*"
+                onChange={onChangeFile}
+                ref={imageInputRef}
+            />
+        </CanvasContainer>
     );
 };
 
-export default Canvas;
+const CanvasContainer = styled.div`
+    width: 80%;
+`;
+
+const DownloadButton = styled(Button)`
+    margin-top: 1em;
+    margin-bottom: 1em;
+    text-align: right;
+    margin-left: auto;
+`;
 
 const CustomCanvas = styled.canvas`
     width: 100%;
+    cursor: pointer;
+    border: thin solid ${props => props.theme.colors.white};
     ${props => `
                 max-width: ${props.width ? props.width : '30'}px;
                 height: ${props.height ? props.height : '40'}px;
@@ -226,3 +277,5 @@ const CustomCanvas = styled.canvas`
                 }
                 `}
 `;
+
+export default Canvas;

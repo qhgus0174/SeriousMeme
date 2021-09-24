@@ -11,11 +11,14 @@ import {
     GoogleAuthProvider,
     GithubAuthProvider,
     signInWithRedirect,
+    UserCredential,
+    signInWithPopup,
 } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { SpinnerContext } from '~context/SpinnerContext';
 import { useHistory } from 'react-router';
 import { useInput } from '~hooks/useInput';
+import { addUser, IUser } from '~firebase/user/user';
 
 const Login = () => {
     const [newAccount, setNewAccount] = useState<boolean>(false);
@@ -32,9 +35,8 @@ const Login = () => {
         setSpinnerVisible(true);
 
         try {
-            newAccount
-                ? await createUserWithEmailAndPassword(auth, email, password)
-                : await signInWithEmailAndPassword(auth, email, password);
+            newAccount ? createUser() : signIn();
+
             history.push('/');
         } catch (err: unknown) {
             const { message } = err as Error;
@@ -56,6 +58,30 @@ const Login = () => {
         }
     };
 
+    const createUser = async () => {
+        await createUserWithEmailAndPassword(auth, email, password).then(res => {
+            insertUser(res, 'normal');
+        });
+    };
+
+    const signIn = async () => {
+        await signInWithEmailAndPassword(auth, email, password).then(res => {
+            insertUser(res, 'normal');
+        });
+    };
+
+    const insertUser = async (userInfo: UserCredential, type: 'normal' | 'sns') => {
+        if (type === 'sns') {
+            if (!newAccount) return;
+        }
+        await addUser({
+            name: userInfo.user.displayName,
+            photoUrl: userInfo.user.photoURL,
+            email: userInfo.user.email,
+            uid: userInfo.user.uid,
+        });
+    };
+
     const onClickLoginSns = async (event: React.MouseEvent<HTMLButtonElement>) => {
         const {
             currentTarget: { name },
@@ -63,7 +89,12 @@ const Login = () => {
 
         setSpinnerVisible(true);
         try {
-            await signInWithRedirect(auth, name === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider());
+            await signInWithPopup(auth, name === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider()).then(
+                res => {
+                    console.log('aaa');
+                    insertUser(res, 'sns');
+                },
+            );
             history.push('/');
         } catch {
             toast.error('로그인 중 오류가 발생했습니다.');

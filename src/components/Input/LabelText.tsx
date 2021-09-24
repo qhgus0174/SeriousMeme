@@ -21,7 +21,7 @@ const TextFormDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    margin: 1em;
+    margin: 0.4em;
     width: 100%;
 `;
 
@@ -59,5 +59,7 @@ const Text = styled.input`
     background: none;
     width: 100%;
     font-size: 14px;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
 `;
 export default LabelText;

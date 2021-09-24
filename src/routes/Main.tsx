@@ -19,6 +19,7 @@ import { useCheckbox } from '~hooks/useCheckbox';
 
 import { nowDateTime, nowDay, nowDayOfWeek } from '~utils/luxon';
 import styled from '@emotion/styled';
+import Checkbox from '~components/Input/Checkbox';
 
 const Main = () => {
     const {
@@ -49,10 +50,7 @@ const Main = () => {
     const [speechIsQuestion, bindSpeechIsQuestion] = useCheckbox(true);
 
     const [contentList, setContentList] = useState<IBoard[]>([]);
-    const [attachment, setAttachment] = useState<string>('');
     const [newAttachment, setNewAttachment] = useState<string>('');
-
-    const imageInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         getList();
@@ -75,7 +73,7 @@ const Main = () => {
         setSpinnerVisible(true);
         try {
             let attatchmentUrl: string | null = null;
-            if (attachment && newAttachment) {
+            if (newAttachment) {
                 const res = await uploadByAttachmentUrlBoard(authUser ? authUser.uid : 'anonymous', newAttachment);
                 attatchmentUrl = await getDownloadURL(res.ref);
             }
@@ -85,35 +83,15 @@ const Main = () => {
                 createUserEmail: authUser ? authUser?.email : 'anonymous',
                 attatchmentUrl: attatchmentUrl,
             });
-            setAttachment('');
             setNewAttachment('');
             clearState();
-            if (imageInputRef.current) imageInputRef.current.value = '';
+            //if (imageInputRef.current) imageInputRef.current.value = '';
         } catch (error) {
             console.log(error);
             console.log('add 에러 발생');
         } finally {
             setSpinnerVisible(false);
         }
-    };
-
-    const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {
-            target: { files },
-        } = event;
-        if (!files) {
-            return;
-        }
-        const file = files[0];
-        const reader = new FileReader();
-
-        reader.readAsDataURL(file);
-
-        reader.onloadend = () => {
-            const renderResult = reader.result;
-            if (renderResult instanceof ArrayBuffer || renderResult == null) return;
-            setAttachment(renderResult);
-        };
     };
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,9 +108,7 @@ const Main = () => {
     return (
         <MainDiv>
             <CanvasForm onSubmit={addPost}>
-                <H2>인간극장 짤 생성기</H2>
                 <Canvas
-                    imageUrl={attachment}
                     text={{
                         clock: { visible: visibleTime, day: day, dayOfWeek: dayOfWeek, time: time },
                         script: {
@@ -148,19 +124,10 @@ const Main = () => {
                         },
                     }}
                     setNewAttachment={setNewAttachment}
-                    triggerFileFunc={() => imageInputRef.current?.click()}
                 />
-                <input
-                    css={css`
-                        display: none;
-                    `}
-                    type="file"
-                    accept="image/*"
-                    onChange={onChangeFile}
-                    ref={imageInputRef}
-                />
-                <ClockDiv>
-                    <input type="checkbox" {...bindVisibleTime} />
+
+                <LeftInsideDiv>
+                    <Checkbox checked={visibleTime} {...bindVisibleTime} />
                     <LabelText
                         label="날짜"
                         name="day"
@@ -175,14 +142,14 @@ const Main = () => {
                     />
                     <LabelText label="요일" name="dayOfWeek" value={dayOfWeek} onChange={onChangeInput} maxLength={1} />
                     <LabelText label="시간" name="time" value={time} onChange={onChangeInput} maxLength={2} />
-                </ClockDiv>
-                <SpeechDiv>
+                </LeftInsideDiv>
+                <LeftInsideDiv>
                     <LabelText label="이름(나이)" name="name" value={name} onChange={onChangeInput} maxLength={20} />
-                    <input type="checkbox" {...bindVisibleJob} maxLength={15} />
-                    <LabelText label="직업" name="job" value={job} onChange={onChangeInput} />
-                </SpeechDiv>
-                <SpeechDiv>
-                    <input type="checkbox" {...bindSpeechIsQuestion} /> 질문인가요?
+                    <Checkbox checked={visibleJob} {...bindVisibleJob} />
+                    <LabelText label="직업" name="job" value={job} onChange={onChangeInput} maxLength={15} />
+                </LeftInsideDiv>
+                <LeftInsideDiv>
+                    <Checkbox checked={speechIsQuestion} {...bindSpeechIsQuestion} />
                     <LabelText
                         label="대사1"
                         name="speechTop"
@@ -190,8 +157,8 @@ const Main = () => {
                         onChange={onChangeInput}
                         maxLength={26}
                     />
-                </SpeechDiv>
-                <SpeechDiv>
+                </LeftInsideDiv>
+                <LeftInsideDiv>
                     <LabelText
                         label="대사2"
                         name="speechBottom"
@@ -199,13 +166,24 @@ const Main = () => {
                         onChange={onChangeInput}
                         maxLength={26}
                     />
-                </SpeechDiv>
-                <SubmitDiv>
+                </LeftInsideDiv>
+                <LeftInsideDiv>
                     <LabelText label="작품 명" name="title" value={title} onChange={onChangeInput} />
-                    <Button type="submit">Go</Button>
-                </SubmitDiv>
+                </LeftInsideDiv>
+                <LeftInsideDiv>
+                    <Button
+                        css={css`
+                            margin-left: auto;
+                        `}
+                        type="submit"
+                    >
+                        자랑하기
+                    </Button>
+                </LeftInsideDiv>
             </CanvasForm>
+
             <ListDiv>
+                <ListTitle>짤들</ListTitle>
                 {contentList.map((content: IBoard) => {
                     return (
                         <ListItem
@@ -227,40 +205,38 @@ const Main = () => {
 const MainDiv = styled.div`
     display: flex;
     justify-content: space-evenly;
+    width: 100%;
 `;
 const CanvasForm = styled.form`
     display: flex;
     flex-direction: column;
     flex-basis: 50%;
+    min-width: 50%;
     align-items: center;
-    padding: 0em 3em 0em 3em;
+`;
+
+const ListTitle = styled.h2`
+    display: flex;
+    flex-basis: 100%;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 1em;
 `;
 const ListDiv = styled.div`
     display: flex;
     justify-content: center;
     flex-basis: 50%;
+    min-width: 50%;
+    flex-flow: wrap;
+    align-items: center;
+    padding-right: 1em;
+    box-sizing: border-box;
 `;
 
-const H2 = styled.h2`
-    text-align: center;
-`;
-
-const ClockDiv = styled.div`
+const LeftInsideDiv = styled.div`
     display: flex;
     align-items: center;
-    width: 100%;
-`;
-
-const SpeechDiv = styled.div`
-    display: flex;
-    align-items: center;
-    width: 100%;
-`;
-
-const SubmitDiv = styled.div`
-    display: flex;
-    align-items: center;
-    width: 100%;
+    width: 80%;
 `;
 
 export default Main;

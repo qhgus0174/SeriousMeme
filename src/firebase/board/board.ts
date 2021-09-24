@@ -14,7 +14,7 @@ import {
 export interface IBoard {
     docId: string;
     content: string;
-    createUserId?: string | null;
+    createUserId: string;
     createUserEmail?: string | null;
     createAt?: number;
     attatchmentUrl?: string | null;

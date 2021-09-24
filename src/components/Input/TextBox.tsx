@@ -6,7 +6,7 @@ export interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const TextBox = ({ width, type = 'text', ...rest }: ITextProps) => {
-    return <CustomInput type={type} {...rest} autoComplete="false" />;
+    return <CustomInput type={type} width={width} {...rest} autoComplete="false" />;
 };
 
 const CustomInput = styled.input<ITextProps>`
