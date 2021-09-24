@@ -91,7 +91,6 @@ const Login = () => {
         try {
             await signInWithPopup(auth, name === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider()).then(
                 res => {
-                    console.log('aaa');
                     insertUser(res, 'sns');
                 },
             );

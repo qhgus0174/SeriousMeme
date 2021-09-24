@@ -35,15 +35,14 @@ interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
             fontSize?: string;
         };
     };
+    setDownloadUrl: (e: string) => void;
     setNewAttachment: (e: string) => void;
     triggerFileFunc?: () => void;
 }
 
-const Canvas = ({ text, setNewAttachment, triggerFileFunc }: ICanvas) => {
+const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...rest }: ICanvas) => {
     const maxWidth = 600;
     const maxHeight = 400;
-
-    const [downloadUrl, setDownloadUrl] = useState<string>('');
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();
@@ -195,15 +194,6 @@ const Canvas = ({ text, setNewAttachment, triggerFileFunc }: ICanvas) => {
         return !pixelBuffer.some(color => color !== 0);
     };
 
-    const onClickDownload = () => {
-        var a = document.createElement('a');
-        a.download = `${nowDateToMillis}.png`;
-        a.href = downloadUrl;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    };
-
     const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {
             target: { files },
@@ -225,9 +215,6 @@ const Canvas = ({ text, setNewAttachment, triggerFileFunc }: ICanvas) => {
 
     return (
         <CanvasContainer>
-            <DownloadButton icon={<SvgIcon shape="download" width={20} height={20} />} onClick={onClickDownload}>
-                다운로드
-            </DownloadButton>
             <CustomCanvas
                 onClick={() => imageInputRef.current?.click()}
                 width={maxWidth}
@@ -251,14 +238,8 @@ const CanvasContainer = styled.div`
     width: 80%;
 `;
 
-const DownloadButton = styled(Button)`
-    margin-top: 1em;
-    margin-bottom: 1em;
-    text-align: right;
-    margin-left: auto;
-`;
-
 const CustomCanvas = styled.canvas`
+    box-sizing: border-box;
     width: 100%;
     cursor: pointer;
     border: thin solid ${props => props.theme.colors.white};

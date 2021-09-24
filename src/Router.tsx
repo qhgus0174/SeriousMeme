@@ -20,7 +20,7 @@ const AppRouter = () => {
     }, [init]);
 
     return init ? (
-        <BrowserRouter>
+        <BrowserRouter basename="SeriousMeme">
             <ModalContext>
                 <Header />
                 <Route exact path="/" component={Main} />

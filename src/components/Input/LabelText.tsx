@@ -21,8 +21,8 @@ const TextFormDiv = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    margin: 0.4em;
     width: 100%;
+    margin: 0.4em;
 `;
 
 const Span = styled.span`

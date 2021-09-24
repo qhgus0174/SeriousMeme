@@ -17,9 +17,10 @@ import { css } from '@emotion/react';
 import { useInput } from '~hooks/useInput';
 import { useCheckbox } from '~hooks/useCheckbox';
 
-import { nowDateTime, nowDay, nowDayOfWeek } from '~utils/luxon';
+import { nowDateTime, nowDateToMillis, nowDay, nowDayOfWeek } from '~utils/luxon';
 import styled from '@emotion/styled';
 import Checkbox from '~components/Input/Checkbox';
+import SvgIcon from '~components/Icon/SvgIcon';
 
 const Main = () => {
     const {
@@ -84,7 +85,7 @@ const Main = () => {
                 attatchmentUrl: attatchmentUrl,
             });
             setNewAttachment('');
-            clearState();
+            //clearState();
             //if (imageInputRef.current) imageInputRef.current.value = '';
         } catch (error) {
             console.log(error);
@@ -105,9 +106,31 @@ const Main = () => {
         setState({ ...initialState });
     };
 
+    const [downloadUrl, setDownloadUrl] = useState<string>('');
+    const onClickDownload = () => {
+        var a = document.createElement('a');
+        a.download = `${nowDateToMillis}.png`;
+        a.href = downloadUrl;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
     return (
         <MainDiv>
             <CanvasForm onSubmit={addPost}>
+                <CanvasButtonsDiv>
+                    <Button color="main" type="submit">
+                        자랑하기
+                    </Button>
+                    <DownloadButton
+                        type="button"
+                        icon={<SvgIcon shape="download" width={20} height={20} />}
+                        onClick={onClickDownload}
+                    >
+                        다운로드
+                    </DownloadButton>
+                </CanvasButtonsDiv>
                 <Canvas
                     text={{
                         clock: { visible: visibleTime, day: day, dayOfWeek: dayOfWeek, time: time },
@@ -124,6 +147,7 @@ const Main = () => {
                         },
                     }}
                     setNewAttachment={setNewAttachment}
+                    setDownloadUrl={setDownloadUrl}
                 />
 
                 <LeftInsideDiv>
@@ -170,18 +194,7 @@ const Main = () => {
                 <LeftInsideDiv>
                     <LabelText label="작품 명" name="title" value={title} onChange={onChangeInput} />
                 </LeftInsideDiv>
-                <LeftInsideDiv>
-                    <Button
-                        css={css`
-                            margin-left: auto;
-                        `}
-                        type="submit"
-                    >
-                        자랑하기
-                    </Button>
-                </LeftInsideDiv>
             </CanvasForm>
-
             <ListDiv>
                 <ListTitle>짤들</ListTitle>
                 {contentList.map((content: IBoard) => {
@@ -220,7 +233,7 @@ const ListTitle = styled.h2`
     flex-basis: 100%;
     text-align: center;
     justify-content: center;
-    margin-bottom: 1em;
+    height: 10%;
 `;
 const ListDiv = styled.div`
     display: flex;
@@ -231,6 +244,8 @@ const ListDiv = styled.div`
     align-items: center;
     padding-right: 1em;
     box-sizing: border-box;
+    align-items: flex-start;
+    align-content: flex-start;
 `;
 
 const LeftInsideDiv = styled.div`
@@ -239,4 +254,14 @@ const LeftInsideDiv = styled.div`
     width: 80%;
 `;
 
+const DownloadButton = styled(Button)``;
+const CanvasButtonsDiv = styled.div`
+    display: flex;
+    width: 80%;
+    flex-direction: row-reverse;
+
+    button {
+        margin: 0.5em;
+    }
+`;
 export default Main;
