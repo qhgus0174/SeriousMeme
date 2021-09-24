@@ -18,8 +18,8 @@ const App = () => {
                 </AuthContext>
             </SpinnerContext>
             <ToastContainer
-                position="top-right"
-                autoClose={2000}
+                position="bottom-right"
+                autoClose={4000}
                 hideProgressBar
                 newestOnTop
                 closeOnClick
