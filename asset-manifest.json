@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/SeriousMeme/static/css/main.abaaa3da.chunk.css",
+    "main.js": "/SeriousMeme/static/js/main.e8918e2c.chunk.js",
+    "main.js.map": "/SeriousMeme/static/js/main.e8918e2c.chunk.js.map",
+    "runtime-main.js": "/SeriousMeme/static/js/runtime-main.6a5fee2e.js",
+    "runtime-main.js.map": "/SeriousMeme/static/js/runtime-main.6a5fee2e.js.map",
+    "static/css/2.0975cee1.chunk.css": "/SeriousMeme/static/css/2.0975cee1.chunk.css",
+    "static/js/2.23e06364.chunk.js": "/SeriousMeme/static/js/2.23e06364.chunk.js",
+    "static/js/2.23e06364.chunk.js.map": "/SeriousMeme/static/js/2.23e06364.chunk.js.map",
+    "index.html": "/SeriousMeme/index.html",
+    "static/css/2.0975cee1.chunk.css.map": "/SeriousMeme/static/css/2.0975cee1.chunk.css.map",
+    "static/css/main.abaaa3da.chunk.css.map": "/SeriousMeme/static/css/main.abaaa3da.chunk.css.map",
+    "static/js/2.23e06364.chunk.js.LICENSE.txt": "/SeriousMeme/static/js/2.23e06364.chunk.js.LICENSE.txt",
+    "static/media/fonts.css": "/SeriousMeme/static/media/SpoqaHanSansNeo-Thin.b8666c6d.ttf",
+    "static/media/arrow-down.474a217e.svg": "/SeriousMeme/static/media/arrow-down.474a217e.svg",
+    "static/media/arrow-up.029e9e03.svg": "/SeriousMeme/static/media/arrow-up.029e9e03.svg",
+    "static/media/defaultUser.1a1c8228.svg": "/SeriousMeme/static/media/defaultUser.1a1c8228.svg",
+    "static/media/download.818fb1d7.svg": "/SeriousMeme/static/media/download.818fb1d7.svg",
+    "static/media/github.1be3365d.svg": "/SeriousMeme/static/media/github.1be3365d.svg",
+    "static/media/google.2eec9b0f.svg": "/SeriousMeme/static/media/google.2eec9b0f.svg",
+    "static/media/home.f7b4438e.svg": "/SeriousMeme/static/media/home.f7b4438e.svg",
+    "static/media/login.745f7423.svg": "/SeriousMeme/static/media/login.745f7423.svg",
+    "static/media/logout.0923e689.svg": "/SeriousMeme/static/media/logout.0923e689.svg",
+    "static/media/profile.781665ba.svg": "/SeriousMeme/static/media/profile.781665ba.svg",
+    "static/media/star-empty.c5286cc5.svg": "/SeriousMeme/static/media/star-empty.c5286cc5.svg",
+    "static/media/star-fill.550f395a.svg": "/SeriousMeme/static/media/star-fill.550f395a.svg",
+    "static/media/trash.32cad38b.svg": "/SeriousMeme/static/media/trash.32cad38b.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6a5fee2e.js",
+    "static/css/2.0975cee1.chunk.css",
+    "static/js/2.23e06364.chunk.js",
+    "static/css/main.abaaa3da.chunk.css",
+    "static/js/main.e8918e2c.chunk.js"
+  ]
+}
