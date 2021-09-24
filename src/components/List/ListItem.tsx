@@ -1,30 +1,28 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Button from '~components/Button/Button';
-import TextBox from '~components/Input/TextBox';
-import { deleteDoc, IBoard, updateDoc } from '~firebase/board/board';
+import { deleteDoc, IBoard } from '~firebase/board/board';
 import { AuthContext } from '~context/AuthContext';
 import { deleteAttachmentByUrl } from '~firebase/storage/storage';
 import { ModalActionContext } from '~context/ModalContext';
-import { useInput } from '~hooks/useInput';
 import styled from '@emotion/styled';
 import { getUserInfo, IUser } from '~firebase/user/user';
 import { QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import SvgIcon from '~components/Icon/SvgIcon';
+import { SpinnerContext } from '~context/SpinnerContext';
+import { toast } from 'react-toastify';
 
 interface IListitem extends IBoard {
     flexBasis?: number;
 }
 
 const ListItem = (items: IListitem) => {
-    const [isEdit, setIsEdit] = useState<boolean>(false);
-    const [newContent, bindNewContent] = useInput<string>(items.content);
-
     type UserInfo = Pick<IUser, 'photoUrl' | 'name'>;
 
     const initialState: UserInfo = {
         name: '',
         photoUrl: '',
     };
+
+    const { setSpinnerVisible } = useContext(SpinnerContext);
 
     const [userInfo, setUserInfo] = useState<UserInfo>(initialState);
 
@@ -39,33 +37,42 @@ const ListItem = (items: IListitem) => {
     } = useContext(AuthContext);
 
     const getUserProfile = async () => {
-        const docs = (await getUserInfo(items.createUserId)) as QuerySnapshot<UserInfo>;
+        try {
+            setSpinnerVisible(true);
+            const docs = (await getUserInfo(items.createUserId)) as QuerySnapshot<UserInfo>;
 
-        docs.forEach((doc: QueryDocumentSnapshot<UserInfo>) => {
-            const { name, photoUrl } = doc.data();
-            setUserInfo(prevState => ({ ...prevState, name: name, photoUrl: photoUrl }));
-        });
+            docs.forEach((doc: QueryDocumentSnapshot<UserInfo>) => {
+                const { name, photoUrl } = doc.data();
+                setUserInfo(prevState => ({ ...prevState, name: name, photoUrl: photoUrl }));
+            });
+        } catch (e) {
+            toast.error('데이터 로딩 중 오류가 발생했습니다.');
+        } finally {
+            setSpinnerVisible(false);
+        }
     };
     const onClickDelete = async () => {
-        setModalProps({
-            isOpen: true,
-            type: 'dialog',
-            content: <>데이터를 삭제하시겠습니까?</>,
-            options: {
-                width: '25',
-                height: '26',
-                confirmFn: async () => {
-                    await deleteDoc(items.docId);
-                    if (items.attatchmentUrl) await deleteAttachmentByUrl(items.attatchmentUrl);
-                },
-            },
-        });
-    };
+        try {
+            setSpinnerVisible(true);
 
-    const onSubmit = async (event: React.FormEvent) => {
-        event.preventDefault();
-        await updateDoc(items.docId, newContent);
-        setIsEdit(false);
+            setModalProps({
+                isOpen: true,
+                type: 'dialog',
+                content: <>데이터를 삭제하시겠습니까?</>,
+                options: {
+                    width: '25',
+                    height: '26',
+                    confirmFn: async () => {
+                        await deleteDoc(items.docId);
+                        if (items.attatchmentUrl) await deleteAttachmentByUrl(items.attatchmentUrl);
+                    },
+                },
+            });
+        } catch (error) {
+            toast.error('데이터 삭제 중 오류가 발생했습니다.');
+        } finally {
+            setSpinnerVisible(false);
+        }
     };
 
     return (
@@ -96,6 +103,8 @@ const WhiteBackground = styled.div`
     background: ${props => props.theme.colors.white};
     border-bottom-left-radius: 1em;
     border-bottom-right-radius: 1em;
+    display: flex;
+    flex-direction: column;
 `;
 const ListContainer = styled.div<Pick<IListitem, 'flexBasis'>>`
     box-sizing: border-box;
@@ -110,18 +119,18 @@ const ImageContainer = styled.div`
     box-sizing: border-box;
     display: flex;
     width: 100%;
-
+    flex-basis: 70%;
     img {
-        width: 100%;
-        height: auto;
-        border-bottom-left-radius: 1.5em;
-        border-bottom-right-radius: 1.5em;
+        max-width: 100%;
+        max-height: 100%;
     }
 `;
 const UserInfoContainer = styled.div`
     padding: 1em;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-basis: 30%;
 `;
 
 const UserTextDiv = styled.div`
@@ -159,7 +168,6 @@ const UserInfoDiv = styled.div`
 const ContentButtonDiv = styled.div`
     display: flex;
     flex-direction: column;
-    margin-left: auto;
     cursor: pointer;
 `;
 
