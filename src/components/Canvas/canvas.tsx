@@ -1,10 +1,8 @@
 import React, { CanvasHTMLAttributes, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { nowDateToMillis } from '~utils/luxon';
 import { media } from '~styles/device';
-import Button from '~components/Button/Button';
-import SvgIcon from '~components/Icon/SvgIcon';
 import { css } from '@emotion/react';
+import blackImage from '~assets/image/black.png';
 
 interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
     text: {
@@ -37,10 +35,19 @@ interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
     };
     setDownloadUrl: (e: string) => void;
     setNewAttachment: (e: string) => void;
-    triggerFileFunc?: () => void;
+    setParentCanvas: (e: HTMLCanvasElement | null) => void;
+    setParentCanvasCtx: (e: CanvasRenderingContext2D | null | undefined) => void;
+    setParentStateClear: () => void;
 }
 
-const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...rest }: ICanvas) => {
+const Canvas = ({
+    text,
+    setNewAttachment,
+    setDownloadUrl,
+    setParentCanvas,
+    setParentCanvasCtx,
+    setParentStateClear,
+}: ICanvas) => {
     const maxWidth = 600;
     const maxHeight = 400;
 
@@ -53,9 +60,16 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
     const imageInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        //setBackgroundImage(imageUrl);
         setCanvas(canvasRef.current);
         setCanvasCtx(canvasRef.current?.getContext('2d'));
+        setParentCanvas(canvasRef.current);
+        setParentCanvasCtx(canvasRef.current?.getContext('2d'));
+
+        if (!attachment) {
+            clearCanvas();
+            drawDefaultCanvas();
+            return;
+        }
 
         initCanvas();
     });
@@ -63,10 +77,20 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
     const initCanvas = () => {
         if (!canvas || !canvasCtx) return;
 
-        if (!attachment) clearCanvas();
-
         const bgImage = new Image();
         bgImage.src = attachment;
+
+        bgImage.onload = function () {
+            drawImage(bgImage);
+            drawText();
+            makeImageUrl();
+        };
+    };
+
+    const drawDefaultCanvas = () => {
+        if (!canvas || !canvasCtx) return;
+        const bgImage = new Image();
+        bgImage.src = blackImage;
 
         bgImage.onload = function () {
             drawImage(bgImage);
@@ -83,10 +107,9 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
 
     const drawImage = (bgImage: HTMLImageElement) => {
         if (!canvas || !canvasCtx) return;
+
         clearCanvas();
-        const width = bgImage.width > bgImage.height ? maxWidth : (bgImage.width * maxWidth) / bgImage.height;
-        const height = bgImage.width > bgImage.height ? (bgImage.height * maxWidth) / bgImage.width : maxHeight;
-        canvasCtx.drawImage(bgImage, 0, 0, width, height);
+        canvasCtx.drawImage(bgImage, 0, 0, 600, 400);
     };
 
     const drawText = () => {
@@ -118,11 +141,11 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
 
         if (visible) {
             canvasCtx.font = '20px Spoqa Han Sans Neo';
-            styleText(day, 42, 45);
-            styleText(`(${dayOfWeek})`, 72, 45);
+            styleText(day, 47, 47);
+            styleText(`(${dayOfWeek})`, 77, 47);
 
             canvasCtx.font = '22px Spoqa Han Sans Neo';
-            styleText(time, 57, 72);
+            styleText(time, 65, 74);
         }
     };
 
@@ -145,7 +168,7 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
             jobName && styleText('/', canvasCenterAround, 280);
 
             canvasCtx.font = '21px NanumMyeongjo';
-            styleText(jobName, calcSpace(canvasCenterAround, jobName, 1, 13.5), 280);
+            styleText(jobName, calcSpace(canvasCenterAround, jobName, 1, 12.5), 280);
         }
     };
 
@@ -160,8 +183,8 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
             },
         } = text;
         canvasCtx.font = '22px NanumMyeongjo';
-        styleText(topText, canvas.width / 2, 320, isQuestion);
-        styleText(bottomText, canvas.width / 2, 355);
+        topText && styleText(`"${topText}"`, canvas.width / 2, 320, isQuestion);
+        bottomText && styleText(`"${bottomText}"`, canvas.width / 2, 355);
     };
 
     const styleText = (text: string, x: number, y: number, color?: boolean) => {
@@ -177,11 +200,18 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
     };
 
     const calcSpace = (bench: number, text: string, operator: 1 | -1, spaceWith: number) => {
-        const onlyTextLength = text.replace(/[~!@#$%^&*()_+|<>?:{}. 0-9]/gi, '').length;
+        const onlyTextLength = text.replace(/[~!@#$%^&*()_+|<>?:{}."' 0-9a-zA-Z]/gi, '').length;
 
         const containNumberArr = text.match(/[0-9]/gi);
         const numberLength = containNumberArr ? containNumberArr.length / 1.7 : 0;
-        const textLength = bench + (onlyTextLength + numberLength) * operator * spaceWith;
+
+        const containEngArr = text.match(/[a-zA-Z]/gi);
+        const engLength = containEngArr ? containEngArr.length / 1.6 : 0;
+
+        const containSpcArr = text.match(/[~!@#$%^&*()_+|<>?:{}."']/gi);
+        const spcLength = containSpcArr ? containSpcArr.length / 2.5 : 0;
+
+        const textLength = bench + (onlyTextLength + numberLength + engLength + spcLength) * operator * spaceWith;
 
         return textLength;
     };
@@ -210,6 +240,7 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
             const renderResult = reader.result;
             if (renderResult instanceof ArrayBuffer || renderResult == null) return;
             setAttachment(renderResult);
+            setParentStateClear();
         };
     };
 
@@ -234,8 +265,13 @@ const Canvas = ({ text, setNewAttachment, setDownloadUrl, triggerFileFunc, ...re
     );
 };
 
+const NoticeDiv = styled.div`
+    position: absolute;
+`;
+
 const CanvasContainer = styled.div`
     width: 80%;
+    text-align: center;
 `;
 
 const CustomCanvas = styled.canvas`

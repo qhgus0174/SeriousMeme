@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '~context/AuthContext';
 import { SpinnerContext } from '~context/SpinnerContext';
 import Button from '~components/Button/Button';
-import TextBox from '~components/Input/TextBox';
 import LabelText from '~components/Input/LabelText';
 import ListItem from '~components/List/ListItem';
 import Canvas from '~components/Canvas/canvas';
@@ -12,15 +11,13 @@ import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from '
 import { addDoc, IBoard, queryBoardCollection } from '~firebase/board/board';
 import { uploadByAttachmentUrlBoard } from '~firebase/storage/storage';
 
-import { css } from '@emotion/react';
-
-import { useInput } from '~hooks/useInput';
 import { useCheckbox } from '~hooks/useCheckbox';
 
 import { nowDateTime, nowDateToMillis, nowDay, nowDayOfWeek } from '~utils/luxon';
 import styled from '@emotion/styled';
 import Checkbox from '~components/Input/Checkbox';
 import SvgIcon from '~components/Icon/SvgIcon';
+import { toast } from 'react-toastify';
 
 const Main = () => {
     const {
@@ -37,12 +34,24 @@ const Main = () => {
         day: nowDay,
         dayOfWeek: nowDayOfWeek,
         time: nowDateTime,
+        title: '샘플입니다!',
+        name: '어둠 (24)',
+        job: '사진이 필요함',
+        speechTop: ' 이렇게 만들 수 있어요! ',
+        speechBottom: ' 여기를 눌러 사진을 선택해주세요📷 ',
+    };
+
+    const resetState: IFormState = {
+        day: nowDay,
+        dayOfWeek: nowDayOfWeek,
+        time: nowDateTime,
         title: '',
         name: '',
         job: '',
         speechTop: '',
         speechBottom: '',
     };
+
     const [{ day, dayOfWeek, time, title, name, job, speechTop, speechBottom }, setState] =
         useState<IFormState>(initialState);
 
@@ -52,25 +61,52 @@ const Main = () => {
 
     const [contentList, setContentList] = useState<IBoard[]>([]);
     const [newAttachment, setNewAttachment] = useState<string>('');
+    const [downloadUrl, setDownloadUrl] = useState<string>('');
+    const [childCanvas, setChildCanvas] = useState<HTMLCanvasElement | null>(null);
+    const [childCanvasCtx, setChildCanvasCtx] = useState<CanvasRenderingContext2D | null | undefined>(null);
 
     useEffect(() => {
         getList();
     }, []);
 
     const getList = () => {
-        onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
-            const snapshotDocs = snapshot.docs as Array<QueryDocumentSnapshot<IBoard>>;
+        try {
+            setSpinnerVisible(true);
+            onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
+                const snapshotDocs = snapshot.docs as Array<QueryDocumentSnapshot<IBoard>>;
 
-            const postList = snapshotDocs.map((doc: QueryDocumentSnapshot<IBoard>) => {
-                return { ...doc.data(), docId: doc.id };
+                const postList = snapshotDocs.map((doc: QueryDocumentSnapshot<IBoard>) => {
+                    return { ...doc.data(), docId: doc.id };
+                });
+
+                setContentList(postList);
             });
+        } catch (err: unknown) {
+            const { message } = err as Error;
+            toast.error('리스트 로딩 중 오류가 발생했습니다.');
+        } finally {
+            setSpinnerVisible(false);
+        }
+    };
 
-            setContentList(postList);
-        });
+    const isCanvasBlank = () => {
+        if (!childCanvas || !childCanvasCtx) return;
+
+        const pixelBuffer = new Uint32Array(
+            childCanvasCtx.getImageData(0, 0, childCanvas.width, childCanvas.height).data.buffer,
+        );
+
+        return !pixelBuffer.some(color => color !== 0);
     };
 
     const addPost = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        if (isCanvasBlank()) {
+            toast.error('짤을 먼저 만들어주세요.');
+            return;
+        }
+
         setSpinnerVisible(true);
         try {
             let attatchmentUrl: string | null = null;
@@ -85,8 +121,7 @@ const Main = () => {
                 attatchmentUrl: attatchmentUrl,
             });
             setNewAttachment('');
-            //clearState();
-            //if (imageInputRef.current) imageInputRef.current.value = '';
+            toast.success('짤을 자랑했습니다!');
         } catch (error) {
             console.log(error);
             console.log('add 에러 발생');
@@ -103,17 +138,23 @@ const Main = () => {
     };
 
     const clearState = () => {
-        setState({ ...initialState });
+        setState({ ...resetState });
     };
 
-    const [downloadUrl, setDownloadUrl] = useState<string>('');
     const onClickDownload = () => {
+        if (isCanvasBlank()) {
+            toast.error('짤을 먼저 만들어주세요.');
+            return;
+        }
+        toast.info('짤을 다운로드 합니다.');
+        setSpinnerVisible(true);
         var a = document.createElement('a');
         a.download = `${nowDateToMillis}.png`;
         a.href = downloadUrl;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        setSpinnerVisible(false);
     };
 
     return (
@@ -148,6 +189,9 @@ const Main = () => {
                     }}
                     setNewAttachment={setNewAttachment}
                     setDownloadUrl={setDownloadUrl}
+                    setParentCanvas={setChildCanvas}
+                    setParentCanvasCtx={setChildCanvasCtx}
+                    setParentStateClear={clearState}
                 />
 
                 <LeftInsideDiv>
@@ -165,7 +209,7 @@ const Main = () => {
                         maxLength={2}
                     />
                     <LabelText label="요일" name="dayOfWeek" value={dayOfWeek} onChange={onChangeInput} maxLength={1} />
-                    <LabelText label="시간" name="time" value={time} onChange={onChangeInput} maxLength={2} />
+                    <LabelText label="시간" name="time" value={time} onChange={onChangeInput} maxLength={5} />
                 </LeftInsideDiv>
                 <LeftInsideDiv>
                     <LabelText label="이름(나이)" name="name" value={name} onChange={onChangeInput} maxLength={20} />
@@ -196,7 +240,7 @@ const Main = () => {
                 </LeftInsideDiv>
             </CanvasForm>
             <ListDiv>
-                <ListTitle>짤들</ListTitle>
+                <ListTitle>✨ 짤 자랑 ✨</ListTitle>
                 {contentList.map((content: IBoard) => {
                     return (
                         <ListItem
@@ -233,7 +277,7 @@ const ListTitle = styled.h2`
     flex-basis: 100%;
     text-align: center;
     justify-content: center;
-    height: 10%;
+    height: 3%;
 `;
 const ListDiv = styled.div`
     display: flex;
