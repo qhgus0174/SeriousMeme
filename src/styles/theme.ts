@@ -14,5 +14,6 @@ export const basic: Theme = {
     buttonColors: {
         none: 'transparent',
         main: '#916DD5',
+        cancel: '#C4C1E0',
     },
 };

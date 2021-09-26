@@ -14,6 +14,7 @@ declare module '@emotion/react' {
 
         buttonColors: {
             none: string;
+            cancel: string;
             main: string;
         };
 
