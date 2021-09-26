@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { deleteDoc, IBoard } from '~firebase/board/board';
+import { deleteDoc, IBoard, updateDoc } from '~firebase/board/board';
 import { AuthContext } from '~context/AuthContext';
 import { deleteAttachmentByUrl } from '~firebase/storage/storage';
 import { ModalActionContext } from '~context/ModalContext';
@@ -9,6 +9,9 @@ import { QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import SvgIcon from '~components/Icon/SvgIcon';
 import { SpinnerContext } from '~context/SpinnerContext';
 import { toast } from 'react-toastify';
+import TextBox from '~components/Input/TextBox';
+import { useInput } from '~hooks/useInput';
+import Button from '~components/Button/Button';
 
 interface IListitem extends IBoard {
     flexBasis?: number;
@@ -24,8 +27,9 @@ const ListItem = (items: IListitem) => {
 
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
+    const [newContent, bindNewContent] = useInput<string>(items.content);
+    const [isEdit, setIsEdit] = useState<boolean>(false);
     const [userInfo, setUserInfo] = useState<UserInfo>(initialState);
-
     const { setModalProps } = useContext(ModalActionContext);
 
     useEffect(() => {
@@ -75,23 +79,51 @@ const ListItem = (items: IListitem) => {
         }
     };
 
+    const onClickEdit = async (event: React.FormEvent) => {
+        event.preventDefault();
+        await updateDoc(items.docId, newContent);
+        setIsEdit(false);
+    };
+
     return (
         <ListContainer flexBasis={items.flexBasis}>
             <WhiteBackground>
                 <ImageContainer>{items.attatchmentUrl && <img src={items.attatchmentUrl} />}</ImageContainer>
                 <UserInfoContainer>
                     <UserTextDiv>
-                        <h3>{items.content ? items.content : `제목 없음`}</h3>
+                        {isEdit ? (
+                            <>
+                                <EditBox {...bindNewContent} autoFocus />
+                            </>
+                        ) : (
+                            <h4>{items.content ? items.content : `제목 없음`}</h4>
+                        )}
+
                         <UserInfoDiv>
                             {userInfo.photoUrl ? <img src={userInfo.photoUrl} /> : <SvgIcon shape="defaultUser" />}
                             <span>{userInfo.name ? userInfo.name : '익명 사용자'}</span>
                         </UserInfoDiv>
                     </UserTextDiv>
-                    {authUser?.uid === items.createUserId && (
-                        <ContentButtonDiv onClick={onClickDelete}>
-                            <SvgIcon shape="trash" width={20} height={20} />
-                        </ContentButtonDiv>
-                    )}
+                    {authUser?.uid === items.createUserId &&
+                        (isEdit ? (
+                            <ContentButtonContainer>
+                                <Button color="main" type="button" onClick={onClickEdit}>
+                                    완료
+                                </Button>
+                                <Button color="cancel" type="button" onClick={() => setIsEdit(false)}>
+                                    취소
+                                </Button>
+                            </ContentButtonContainer>
+                        ) : (
+                            <ContentButtonContainer>
+                                <ContentButtonDiv onClick={() => setIsEdit(true)}>
+                                    <SvgIcon color="main2" shape="edit" width={20} height={20} />
+                                </ContentButtonDiv>
+                                <ContentButtonDiv onClick={onClickDelete}>
+                                    <SvgIcon shape="trash" width={20} height={20} />
+                                </ContentButtonDiv>
+                            </ContentButtonContainer>
+                        ))}
                 </UserInfoContainer>
             </WhiteBackground>
         </ListContainer>
@@ -126,7 +158,7 @@ const ImageContainer = styled.div`
     }
 `;
 const UserInfoContainer = styled.div`
-    padding: 1em;
+    padding: 1em 1em 1em 1em;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -135,11 +167,11 @@ const UserInfoContainer = styled.div`
 
 const UserTextDiv = styled.div`
     box-sizing: border-box;
-    margin-left: 1em;
     display: flex;
     flex-direction: column;
-
-    h3 {
+    margin-left: 1em;
+    margin-right: 1em;
+    h4 {
         color: ${props => props.theme.colors.black};
     }
 `;
@@ -166,9 +198,16 @@ const UserInfoDiv = styled.div`
 `;
 
 const ContentButtonDiv = styled.div`
-    display: flex;
-    flex-direction: column;
     cursor: pointer;
 `;
 
+const EditBox = styled(TextBox)`
+    padding: 0;
+    margin: 0;
+    color: ${props => props.theme.colors.black};
+`;
+const ContentButtonContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
 export default ListItem;
