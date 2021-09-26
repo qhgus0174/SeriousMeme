@@ -12,7 +12,6 @@ const Pagination = ({ totalCount = 0, perPage = 4, currentPage = 1, setCurrentPa
     const [pageNumbers, setPageNumbers] = useState<number[]>([]);
 
     useEffect(() => {
-        console.log(totalCount, perPage);
         setPageNumbers(Array.from(Array(Math.ceil(totalCount / perPage)).keys(), x => x + 1));
     }, [totalCount]);
 

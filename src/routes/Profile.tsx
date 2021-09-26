@@ -14,19 +14,24 @@ import SvgIcon from '~components/Icon/SvgIcon';
 import { useInput } from '~hooks/useInput';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import Pagination from '~components/Pagination/Pagination';
 
 const Profile = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
     const [contentList, setContentList] = useState<IBoard[]>([]);
-    const [newPhotoUrl, setNewPhotoUrl] = useState<string | null>(authUser!.photoURL);
+    const [newPhotoUrl, setNewPhotoUrl] = useState<string | null>(null);
     const [isFold, setIsFold] = useState<boolean>(false);
 
     const [newDisplayName, bindNewDisplayName] = useInput<string | null>(authUser!.displayName);
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
     const imageInputRef = useRef<HTMLInputElement>(null);
+
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [perPage, setPerPage] = useState<number>(12);
+    const [contentCount, setContentCount] = useState<number>(0);
 
     useEffect(() => {
         setContentList([]);
@@ -40,6 +45,8 @@ const Profile = () => {
             const newObj = { ...doc.data(), docId: doc.id };
             setContentList(res => [...res, newObj]);
         });
+
+        setContentCount(docs.size);
     };
 
     const onSubmit = async (event: React.FormEvent) => {
@@ -54,10 +61,13 @@ const Profile = () => {
                 const res = await uploadByAttachmentUrlProfile(authUser ? authUser.uid : 'anonymous', newPhotoUrl);
                 photoUrl = await getDownloadURL(res.ref);
                 await updateProfile(authUser!, { displayName: newDisplayName, photoURL: photoUrl });
-                toast('변경되었음');
-                setContentList([]);
-                getList();
+            } else {
+                console.log('abcd');
+                await updateProfile(authUser!, { displayName: newDisplayName });
             }
+            toast('프로필이 변경되었습니다.');
+            setContentList([]);
+            getList();
         } catch (err: unknown) {
             const { message } = err as Error;
             console.log(message);
@@ -88,8 +98,8 @@ const Profile = () => {
         <>
             <ProfileFormContainer onSubmit={onSubmit}>
                 <PhotoDiv onClick={() => imageInputRef.current?.click()}>
-                    {newPhotoUrl ? (
-                        <img src={newPhotoUrl} width="100px" height="100px" alt="프로필 사진" />
+                    {authUser!.photoURL ? (
+                        <img src={authUser!.photoURL} width="100px" height="100px" alt="프로필 사진" />
                     ) : (
                         <SvgIcon shape="profile" width={100} height={100} />
                     )}
@@ -132,6 +142,14 @@ const Profile = () => {
                         />
                     );
                 })}
+                <ListPaginig>
+                    <Pagination
+                        currentPage={currentPage}
+                        perPage={perPage}
+                        setCurrentPage={setCurrentPage}
+                        totalCount={contentCount}
+                    />
+                </ListPaginig>
             </ListDiv>
         </>
     );
@@ -180,4 +198,12 @@ const ListTitle = styled.h2`
     justify-content: center;
 `;
 
+const ListPaginig = styled.div`
+    display: flex;
+    flex-basis: 100%;
+    text-align: center;
+    justify-content: center;
+    height: 10%;
+    align-items: center;
+`;
 export default Profile;
