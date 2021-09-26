@@ -12,6 +12,7 @@ import { ReactComponent as DefaultUser } from '~assets/svg/defaultUser.svg';
 import { ReactComponent as Trash } from '~assets/svg/trash.svg';
 import { ReactComponent as ArrowDown } from '~assets/svg/arrow-down.svg';
 import { ReactComponent as ArrowUp } from '~assets/svg/arrow-up.svg';
+import { ReactComponent as Edit } from '~assets/svg/edit.svg';
 import { Theme } from '@emotion/react';
 
 interface ISvg {
@@ -34,7 +35,8 @@ type IIconType =
     | 'defaultUser'
     | 'trash'
     | 'arrow-down'
-    | 'arrow-up';
+    | 'arrow-up'
+    | 'edit';
 
 const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
     const icon = () => {
@@ -65,6 +67,8 @@ const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
                 return <ArrowDown fill={color} width={width} height={height} />;
             case 'arrow-up':
                 return <ArrowUp fill={color} width={width} height={height} />;
+            case 'edit':
+                return <Edit fill={color} width={width} height={height} />;
             default:
                 return <></>;
         }
