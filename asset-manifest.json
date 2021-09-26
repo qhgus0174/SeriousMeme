@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/SeriousMeme/static/css/main.abaaa3da.chunk.css",
-    "main.js": "/SeriousMeme/static/js/main.099bc5b3.chunk.js",
-    "main.js.map": "/SeriousMeme/static/js/main.099bc5b3.chunk.js.map",
+    "main.js": "/SeriousMeme/static/js/main.5ccacc00.chunk.js",
+    "main.js.map": "/SeriousMeme/static/js/main.5ccacc00.chunk.js.map",
     "runtime-main.js": "/SeriousMeme/static/js/runtime-main.6a5fee2e.js",
     "runtime-main.js.map": "/SeriousMeme/static/js/runtime-main.6a5fee2e.js.map",
     "static/css/2.0975cee1.chunk.css": "/SeriousMeme/static/css/2.0975cee1.chunk.css",
@@ -24,6 +24,7 @@
     "static/media/login.745f7423.svg": "/SeriousMeme/static/media/login.745f7423.svg",
     "static/media/logout.0923e689.svg": "/SeriousMeme/static/media/logout.0923e689.svg",
     "static/media/profile.781665ba.svg": "/SeriousMeme/static/media/profile.781665ba.svg",
+    "static/media/reset.4187e3ef.svg": "/SeriousMeme/static/media/reset.4187e3ef.svg",
     "static/media/star-empty.c5286cc5.svg": "/SeriousMeme/static/media/star-empty.c5286cc5.svg",
     "static/media/star-fill.550f395a.svg": "/SeriousMeme/static/media/star-fill.550f395a.svg",
     "static/media/trash.32cad38b.svg": "/SeriousMeme/static/media/trash.32cad38b.svg"
@@ -33,6 +34,6 @@
     "static/css/2.0975cee1.chunk.css",
     "static/js/2.c01bfc1d.chunk.js",
     "static/css/main.abaaa3da.chunk.css",
-    "static/js/main.099bc5b3.chunk.js"
+    "static/js/main.5ccacc00.chunk.js"
   ]
 }
