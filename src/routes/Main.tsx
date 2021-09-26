@@ -8,7 +8,7 @@ import Canvas from '~components/Canvas/canvas';
 
 import { getDownloadURL } from '@firebase/storage';
 import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
-import { addDoc, getBoardCount, getBoardData, getMaxIndex, IBoard, queryBoardCollection } from '~firebase/board/board';
+import { addDoc, IBoard, queryBoardCollection } from '~firebase/board/board';
 import { uploadByAttachmentUrlBoard } from '~firebase/storage/storage';
 
 import { useCheckbox } from '~hooks/useCheckbox';
@@ -79,13 +79,17 @@ const Main = () => {
         try {
             setContentList([]);
             setSpinnerVisible(true);
+            const getContent = onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
+                const snapshotDocs = snapshot.docs as Array<QueryDocumentSnapshot<IBoard>>;
 
-            const docs = (await getBoardData()) as QuerySnapshot<IBoard>;
-            docs.forEach((doc: QueryDocumentSnapshot<IBoard>) => {
-                const newObj = Object.assign(doc.data(), { docId: doc.id });
-                setContentList(prevState => [...prevState, newObj]);
+                const postList = snapshotDocs.map((doc: QueryDocumentSnapshot<IBoard>) => {
+                    return { ...doc.data(), docId: doc.id };
+                });
+
+                setContentList(postList);
+
+                setContentCount(postList.length);
             });
-            setContentCount(docs.size);
         } catch (err: unknown) {
             const { message } = err as Error;
             toast.error('리스트 로딩 중 오류가 발생했습니다.');
@@ -214,7 +218,7 @@ const Main = () => {
                         onChange={onChangeInput}
                         maxLength={2}
                     />
-                    <LabelText label="요일" name="dayOfWeek" value={dayOfWeek} onChange={onChangeInput} maxLength={1} />
+                    <LabelText label="요일" name="dayOfWeek" value={dayOfWeek} onChange={onChangeInput} maxLength={3} />
                     <LabelText label="시간" name="time" value={time} onChange={onChangeInput} maxLength={5} />
                 </LeftInsideDiv>
                 <LeftInsideDiv>
