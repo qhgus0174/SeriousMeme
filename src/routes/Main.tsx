@@ -8,7 +8,7 @@ import Canvas from '~components/Canvas/canvas';
 
 import { getDownloadURL } from '@firebase/storage';
 import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
-import { addDoc, IBoard, queryBoardCollection } from '~firebase/board/board';
+import { addDoc, getBoardCount, getBoardData, getMaxIndex, IBoard, queryBoardCollection } from '~firebase/board/board';
 import { uploadByAttachmentUrlBoard } from '~firebase/storage/storage';
 
 import { useCheckbox } from '~hooks/useCheckbox';
@@ -18,11 +18,16 @@ import styled from '@emotion/styled';
 import Checkbox from '~components/Input/Checkbox';
 import SvgIcon from '~components/Icon/SvgIcon';
 import { toast } from 'react-toastify';
+import { media } from '~styles/device';
+import Pagination from '~components/Pagination/Pagination';
 
 const Main = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
+
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [perPage, setPerPage] = useState<number>(4);
 
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
@@ -60,6 +65,7 @@ const Main = () => {
     const [speechIsQuestion, bindSpeechIsQuestion] = useCheckbox(true);
 
     const [contentList, setContentList] = useState<IBoard[]>([]);
+    const [contentCount, setContentCount] = useState<number>(0);
     const [newAttachment, setNewAttachment] = useState<string>('');
     const [downloadUrl, setDownloadUrl] = useState<string>('');
     const [childCanvas, setChildCanvas] = useState<HTMLCanvasElement | null>(null);
@@ -67,20 +73,19 @@ const Main = () => {
 
     useEffect(() => {
         getList();
-    }, []);
+    }, [currentPage]);
 
-    const getList = () => {
+    const getList = async () => {
         try {
+            setContentList([]);
             setSpinnerVisible(true);
-            onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
-                const snapshotDocs = snapshot.docs as Array<QueryDocumentSnapshot<IBoard>>;
 
-                const postList = snapshotDocs.map((doc: QueryDocumentSnapshot<IBoard>) => {
-                    return { ...doc.data(), docId: doc.id };
-                });
-
-                setContentList(postList);
+            const docs = (await getBoardData()) as QuerySnapshot<IBoard>;
+            docs.forEach((doc: QueryDocumentSnapshot<IBoard>) => {
+                const newObj = Object.assign(doc.data(), { docId: doc.id });
+                setContentList(prevState => [...prevState, newObj]);
             });
+            setContentCount(docs.size);
         } catch (err: unknown) {
             const { message } = err as Error;
             toast.error('리스트 로딩 중 오류가 발생했습니다.');
@@ -121,6 +126,7 @@ const Main = () => {
                 attatchmentUrl: attatchmentUrl,
             });
             setNewAttachment('');
+            getList();
             toast.success('짤을 자랑했습니다!');
         } catch (error) {
             console.log(error);
@@ -241,19 +247,33 @@ const Main = () => {
             </CanvasForm>
             <ListDiv>
                 <ListTitle>✨ 짤 자랑 ✨</ListTitle>
-                {contentList.map((content: IBoard) => {
-                    return (
-                        <ListItem
-                            key={content.docId}
-                            docId={content.docId}
-                            content={content.content}
-                            createAt={content.createAt}
-                            createUserId={content.createUserId}
-                            createUserEmail={content.createUserEmail}
-                            attatchmentUrl={content.attatchmentUrl}
-                        />
-                    );
-                })}
+                {contentList
+                    .slice(
+                        currentPage === 1 ? 0 : (currentPage - 1) * perPage,
+                        currentPage === 1 ? perPage : (currentPage - 1) * perPage + perPage,
+                    )
+                    .map((content: IBoard) => {
+                        return (
+                            <ListItem
+                                key={content.docId}
+                                id={content.id}
+                                docId={content.docId}
+                                content={content.content}
+                                createAt={content.createAt}
+                                createUserId={content.createUserId}
+                                createUserEmail={content.createUserEmail}
+                                attatchmentUrl={content.attatchmentUrl}
+                            />
+                        );
+                    })}
+                <ListPaginig>
+                    <Pagination
+                        currentPage={currentPage}
+                        perPage={perPage}
+                        setCurrentPage={setCurrentPage}
+                        totalCount={contentCount}
+                    />
+                </ListPaginig>
             </ListDiv>
         </MainDiv>
     );
@@ -263,6 +283,10 @@ const MainDiv = styled.div`
     display: flex;
     justify-content: space-evenly;
     width: 100%;
+
+    ${media.desktop} {
+        flex-direction: column;
+    }
 `;
 const CanvasForm = styled.form`
     display: flex;
@@ -277,7 +301,8 @@ const ListTitle = styled.h2`
     flex-basis: 100%;
     text-align: center;
     justify-content: center;
-    height: 3%;
+    height: 10%;
+    align-items: center;
 `;
 const ListDiv = styled.div`
     display: flex;
@@ -292,6 +317,14 @@ const ListDiv = styled.div`
     align-content: flex-start;
 `;
 
+const ListPaginig = styled.div`
+    display: flex;
+    flex-basis: 100%;
+    text-align: center;
+    justify-content: center;
+    height: 10%;
+    align-items: center;
+`;
 const LeftInsideDiv = styled.div`
     display: flex;
     align-items: center;

@@ -121,6 +121,7 @@ const Profile = () => {
                     return (
                         <ListItem
                             flexBasis={25}
+                            id={content.id}
                             key={content.docId}
                             docId={content.docId}
                             content={content.content}
