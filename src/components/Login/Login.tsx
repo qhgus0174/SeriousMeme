@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 import { SpinnerContext } from '~context/SpinnerContext';
 import { useHistory } from 'react-router';
 import { useInput } from '~hooks/useInput';
-import { addUser, IUser } from '~firebase/user/user';
+import { addUser, getUserDocId, IUser } from '~firebase/user/user';
 
 const Login = () => {
     const [newAccount, setNewAccount] = useState<boolean>(false);
@@ -34,10 +34,15 @@ const Login = () => {
 
         setSpinnerVisible(true);
 
-        try {
-            newAccount ? createUser() : signIn();
+        newAccount ? createUser() : signIn();
+        history.push('/');
+    };
 
-            history.push('/');
+    const createUser = async () => {
+        try {
+            await createUserWithEmailAndPassword(auth, email, password).then(res => {
+                insertUser(res, 'normal');
+            });
         } catch (err: unknown) {
             const { message } = err as Error;
 
@@ -58,22 +63,32 @@ const Login = () => {
         }
     };
 
-    const createUser = async () => {
-        await createUserWithEmailAndPassword(auth, email, password).then(res => {
-            insertUser(res, 'normal');
-        });
-    };
-
     const signIn = async () => {
-        await signInWithEmailAndPassword(auth, email, password).then(res => {
-            insertUser(res, 'normal');
-        });
+        try {
+            await signInWithEmailAndPassword(auth, email, password).then(res => {
+                insertUser(res, 'normal');
+            });
+        } catch (err: unknown) {
+            const { message } = err as Error;
+
+            if (message.includes('email-already-in-use')) {
+                toast.error('이미 가입 된 계정 입니다.');
+            } else if (message.includes('user-not-found')) {
+                toast.error('사용자를 찾을 수 없습니다.');
+            } else if (message.includes('weak-password')) {
+                toast.error('비밀번호 길이가 너무 짧습니다.');
+            } else if (message.includes('wrong-password')) {
+                toast.error('이메일 또는 아이디가 잘못되었습니다.');
+            } else {
+                console.log(message);
+                toast.error('계정 생성 중 오류가 발생했습니다.');
+            }
+        } finally {
+            setSpinnerVisible(false);
+        }
     };
 
     const insertUser = async (userInfo: UserCredential, type: 'normal' | 'sns') => {
-        if (type === 'sns') {
-            if (!newAccount) return;
-        }
         await addUser({
             name: userInfo.user.displayName,
             photoUrl: userInfo.user.photoURL,
@@ -91,7 +106,9 @@ const Login = () => {
         try {
             await signInWithPopup(auth, name === 'google' ? new GoogleAuthProvider() : new GithubAuthProvider()).then(
                 res => {
-                    insertUser(res, 'sns');
+                    getUserDocId(res.user.uid).then(async (docId: string) => {
+                        if (!docId) insertUser(res, 'sns');
+                    });
                 },
             );
             history.push('/');
@@ -120,10 +137,10 @@ const Login = () => {
             </form>
             <LoginButtonContainer>
                 <SnsLoginButton name="google" icon={<SvgIcon shape="googleLogo" />} onClick={onClickLoginSns}>
-                    Continue with Google
+                    {newAccount ? 'Create Account with Google' : 'Continue with Google'}
                 </SnsLoginButton>
                 <SnsLoginButton name="github" icon={<SvgIcon shape="github" />} onClick={onClickLoginSns}>
-                    Continue with Github
+                    {newAccount ? 'Create Account with Github' : 'Continue with Github'}
                 </SnsLoginButton>
             </LoginButtonContainer>
         </LoginContainer>

@@ -15,13 +15,14 @@ import { useInput } from '~hooks/useInput';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import Pagination from '~components/Pagination/Pagination';
+import { updateUserInfo } from '~firebase/user/user';
 
 const Profile = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
     const [contentList, setContentList] = useState<IBoard[]>([]);
-    const [newPhotoUrl, setNewPhotoUrl] = useState<string | null>(null);
+    const [newPhotoUrl, setNewPhotoUrl] = useState<string | null>(authUser!.photoURL);
     const [isFold, setIsFold] = useState<boolean>(false);
 
     const [newDisplayName, bindNewDisplayName] = useInput<string | null>(authUser!.displayName);
@@ -58,14 +59,17 @@ const Profile = () => {
             let photoUrl: string | null = null;
 
             if (newPhotoUrl) {
-                const res = await uploadByAttachmentUrlProfile(authUser ? authUser.uid : 'anonymous', newPhotoUrl);
-                photoUrl = await getDownloadURL(res.ref);
-                await updateProfile(authUser!, { displayName: newDisplayName, photoURL: photoUrl });
-            } else {
-                console.log('abcd');
-                await updateProfile(authUser!, { displayName: newDisplayName });
+                if (newPhotoUrl != authUser!.photoURL) {
+                    const res = await uploadByAttachmentUrlProfile(authUser ? authUser.uid : 'anonymous', newPhotoUrl);
+                    photoUrl = await getDownloadURL(res.ref);
+                    updateUserProfile(photoUrl);
+                    updateUserInfos(photoUrl);
+                } else {
+                    updateUserProfile(newPhotoUrl);
+                    updateUserInfos(newPhotoUrl);
+                }
             }
-            toast('프로필이 변경되었습니다.');
+            toast.success('프로필이 변경되었습니다.');
             setContentList([]);
             getList();
         } catch (err: unknown) {
@@ -76,16 +80,23 @@ const Profile = () => {
         }
     };
 
+    const updateUserProfile = async (photoUrl: string) => {
+        await updateProfile(authUser!, { displayName: newDisplayName, photoURL: photoUrl });
+    };
+    const updateUserInfos = async (photoUrl: string) => {
+        await updateUserInfo(authUser!.uid, { name: newDisplayName, photoUrl: photoUrl });
+    };
+
     const onChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {
             target: { files },
         } = event;
-        if (!files) {
-            return;
-        }
+
+        if (!files) return;
         const file = files[0];
         const reader = new FileReader();
 
+        if (!file) return;
         reader.readAsDataURL(file);
 
         reader.onloadend = () => {
@@ -98,8 +109,8 @@ const Profile = () => {
         <>
             <ProfileFormContainer onSubmit={onSubmit}>
                 <PhotoDiv onClick={() => imageInputRef.current?.click()}>
-                    {authUser!.photoURL ? (
-                        <img src={authUser!.photoURL} width="100px" height="100px" alt="프로필 사진" />
+                    {newPhotoUrl ? (
+                        <img src={newPhotoUrl} width="100px" height="100px" alt="프로필 사진" />
                     ) : (
                         <SvgIcon shape="profile" width={100} height={100} />
                     )}
