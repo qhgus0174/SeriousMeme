@@ -14,6 +14,7 @@ import { ReactComponent as ArrowDown } from '~assets/svg/arrow-down.svg';
 import { ReactComponent as ArrowUp } from '~assets/svg/arrow-up.svg';
 import { ReactComponent as Edit } from '~assets/svg/edit.svg';
 import { ReactComponent as Reset } from '~assets/svg/reset.svg';
+import { ReactComponent as More } from '~assets/svg/more.svg';
 import { Theme } from '@emotion/react';
 
 interface ISvg {
@@ -38,7 +39,8 @@ type IIconType =
     | 'arrow-down'
     | 'arrow-up'
     | 'edit'
-    | 'reset';
+    | 'reset'
+    | 'more';
 
 const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
     const icon = () => {
@@ -73,6 +75,8 @@ const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
                 return <Edit fill={color} width={width} height={height} />;
             case 'reset':
                 return <Reset fill={color} width={width} height={height} />;
+            case 'more':
+                return <More fill={color} width={width} height={height} />;
             default:
                 return <></>;
         }

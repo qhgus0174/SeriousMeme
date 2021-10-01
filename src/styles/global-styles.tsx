@@ -15,6 +15,8 @@ export const GlobalStyle = () => {
 
                 body {
                     background-color: ${theme.colors.mainBackground};
+                    height: 100%;
+                    margin: 0;
                 }
 
                 input[type='text'] {

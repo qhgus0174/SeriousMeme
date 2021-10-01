@@ -9,6 +9,7 @@ export const basic: Theme = {
         main2: '#684297',
         mainLignt: '#b4a1cb',
         gray: '#98999f',
+        border: '#293B5F',
     },
 
     buttonColors: {

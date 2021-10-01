@@ -26,12 +26,9 @@ export interface IBoard {
 
 //게시물 - board collection
 export const boardCollection = collection(db, 'board');
-export const queryBoardCollection = query(boardCollection, orderBy('createAt', 'desc'));
+export const queryBoardCollection = query(boardCollection, orderBy('id', 'desc'));
 
 const doc = (docId: IBoard['docId']) => fsDoc(boardCollection, docId);
-
-export const getBoardData = async () => await fsGetDocs(query(boardCollection, orderBy('id', 'desc')));
-export const getBoardCount = async () => (await fsGetDocs(boardCollection)).size;
 
 export const addDoc = async (data: Omit<IBoard, 'docId' | 'id'>) => {
     getMaxIndex().then(async (maxId: number) => {

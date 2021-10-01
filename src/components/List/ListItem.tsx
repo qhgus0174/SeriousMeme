@@ -81,8 +81,16 @@ const ListItem = (items: IListitem) => {
 
     const onClickEdit = async (event: React.FormEvent) => {
         event.preventDefault();
-        await updateDoc(items.docId, newContent);
-        setIsEdit(false);
+        try {
+            setSpinnerVisible(true);
+            await updateDoc(items.docId, newContent);
+            setIsEdit(false);
+            toast.success('수정이 완료되었습니다.');
+        } catch (error) {
+            toast.error('데이터 수정 중 오류가 발생했습니다.');
+        } finally {
+            setSpinnerVisible(false);
+        }
     };
 
     return (

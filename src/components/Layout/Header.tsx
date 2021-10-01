@@ -14,6 +14,7 @@ import { signOut } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { SpinnerContext } from '~context/SpinnerContext';
 import { Link, useHistory } from 'react-router-dom';
+import Sidebar from './Sidebar';
 
 const Header = () => {
     const {
@@ -29,7 +30,7 @@ const Header = () => {
         try {
             await signOut(auth);
             history.push('/');
-            toast('로그아웃 되었습니다.');
+            toast.info('로그아웃 되었습니다.');
         } catch (error) {
             toast.error('로그아웃 중 오류가 발생했습니다.');
         } finally {
@@ -43,7 +44,6 @@ const Header = () => {
 
     return (
         <HeaderDiv>
-            <PaddingDiv></PaddingDiv>
             <PaddingDiv>
                 <StyledLink to="/">
                     <SvgIcon shape="home" />
@@ -102,7 +102,6 @@ const PaddingDiv = styled.div`
 
 const HeaderDiv = styled.div`
     padding: 1em;
-    margin-bottom: 2em;
     display: flex;
     justify-content: space-between;
     align-items: center;

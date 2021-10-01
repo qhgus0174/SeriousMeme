@@ -23,7 +23,7 @@ const Button = ({ children, icon, color = 'none', ...rest }: IButtonProps) => {
 
 const BasicButton = styled.button<IButtonProps>`
     box-sizing: border-box;
-    border: 1px solid ${props => props.theme.colors.white};
+    border: ${props => (props.border ? props.border : `1px solid ${props.theme.colors.white}`)};
     outline: 0;
     text-align: center;
     padding: 0.6rem 1.1rem;

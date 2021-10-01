@@ -34,7 +34,7 @@ const Label = styled.label`
     display: flex;
     flex-direction: column;
     padding: 0.4em 0.5em 0.5em 0.5em;
-    border: 1px solid ${props => props.theme.colors.white};
+    border: 1px solid ${props => props.theme.colors.border};
     border-radius: 3px;
     outline-width: 3px;
     outline-offset: -2px;

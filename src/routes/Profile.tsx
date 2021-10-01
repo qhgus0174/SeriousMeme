@@ -31,7 +31,7 @@ const Profile = () => {
     const imageInputRef = useRef<HTMLInputElement>(null);
 
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(12);
+    const [perPage, setPerPage] = useState<number>(6);
     const [contentCount, setContentCount] = useState<number>(0);
 
     useEffect(() => {
@@ -106,7 +106,7 @@ const Profile = () => {
     };
 
     return (
-        <>
+        <ProfileContainter>
             <ProfileFormContainer onSubmit={onSubmit}>
                 <PhotoDiv onClick={() => imageInputRef.current?.click()}>
                     {newPhotoUrl ? (
@@ -141,7 +141,7 @@ const Profile = () => {
                 {contentList.map((content: IBoard) => {
                     return (
                         <ListItem
-                            flexBasis={25}
+                            flexBasis={100 / (perPage / 2)}
                             id={content.id}
                             key={content.docId}
                             docId={content.docId}
@@ -162,12 +162,17 @@ const Profile = () => {
                     />
                 </ListPaginig>
             </ListDiv>
-        </>
+        </ProfileContainter>
     );
 };
 interface iii {
     isFold: boolean;
 }
+const ProfileContainter = styled.div`
+    flex-basis: 75%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+`;
 const FoldDiv = styled.div`
     cursor: pointer;
     svg {

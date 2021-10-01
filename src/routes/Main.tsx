@@ -1,14 +1,12 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '~context/AuthContext';
 import { SpinnerContext } from '~context/SpinnerContext';
 import Button from '~components/Button/Button';
 import LabelText from '~components/Input/LabelText';
-import ListItem from '~components/List/ListItem';
 import Canvas from '~components/Canvas/canvas';
 
 import { getDownloadURL } from '@firebase/storage';
-import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
-import { addDoc, IBoard, queryBoardCollection } from '~firebase/board/board';
+import { addDoc } from '~firebase/board/board';
 import { uploadByAttachmentUrlBoard } from '~firebase/storage/storage';
 
 import { useCheckbox } from '~hooks/useCheckbox';
@@ -19,15 +17,11 @@ import Checkbox from '~components/Input/Checkbox';
 import SvgIcon from '~components/Icon/SvgIcon';
 import { toast } from 'react-toastify';
 import { media } from '~styles/device';
-import Pagination from '~components/Pagination/Pagination';
 
 const Main = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
-
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(4);
 
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
@@ -40,8 +34,8 @@ const Main = () => {
         dayOfWeek: nowDayOfWeek,
         time: nowDateTime,
         title: '샘플입니다!',
-        name: '어둠 (24)',
-        job: '사진이 필요함',
+        name: '박스(24)',
+        job: '짤 만드는 공간',
         speechTop: ' 이렇게 만들 수 있어요! ',
         speechBottom: ' 여기를 눌러 사진을 선택해주세요📷 ',
     };
@@ -64,39 +58,11 @@ const Main = () => {
     const [visibleJob, bindVisibleJob] = useCheckbox(true);
     const [speechIsQuestion, bindSpeechIsQuestion] = useCheckbox(true);
 
-    const [contentList, setContentList] = useState<IBoard[]>([]);
-    const [contentCount, setContentCount] = useState<number>(0);
+    const [isReset, setIsReset] = useState<boolean>(false);
     const [newAttachment, setNewAttachment] = useState<string>('');
     const [downloadUrl, setDownloadUrl] = useState<string>('');
     const [childCanvas, setChildCanvas] = useState<HTMLCanvasElement | null>(null);
     const [childCanvasCtx, setChildCanvasCtx] = useState<CanvasRenderingContext2D | null | undefined>(null);
-
-    useEffect(() => {
-        getList();
-    }, [currentPage]);
-
-    const getList = async () => {
-        try {
-            setContentList([]);
-            setSpinnerVisible(true);
-            const getContent = onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
-                const snapshotDocs = snapshot.docs as Array<QueryDocumentSnapshot<IBoard>>;
-
-                const postList = snapshotDocs.map((doc: QueryDocumentSnapshot<IBoard>) => {
-                    return { ...doc.data(), docId: doc.id };
-                });
-
-                setContentList(postList);
-
-                setContentCount(postList.length);
-            });
-        } catch (err: unknown) {
-            const { message } = err as Error;
-            toast.error('리스트 로딩 중 오류가 발생했습니다.');
-        } finally {
-            setSpinnerVisible(false);
-        }
-    };
 
     const isCanvasBlank = () => {
         if (!childCanvas || !childCanvasCtx) return;
@@ -130,7 +96,6 @@ const Main = () => {
                 attatchmentUrl: attatchmentUrl,
             });
             setNewAttachment('');
-            getList();
             toast.success('짤을 자랑했습니다!');
         } catch (error) {
             console.log(error);
@@ -168,19 +133,28 @@ const Main = () => {
     };
 
     return (
-        <MainDiv>
+        <MainContainer>
             <CanvasForm onSubmit={addPost}>
                 <CanvasButtonsDiv>
-                    <Button color="main" type="submit">
-                        자랑하기
-                    </Button>
-                    <DownloadButton
-                        type="button"
-                        icon={<SvgIcon shape="download" width={20} height={20} />}
-                        onClick={onClickDownload}
-                    >
-                        다운로드
-                    </DownloadButton>
+                    <ResetButtonDiv>
+                        <Button
+                            type="button"
+                            icon={<SvgIcon shape="reset" width={20} height={20} />}
+                            onClick={() => setIsReset(true)}
+                        />
+                    </ResetButtonDiv>
+                    <DownButtonDiv>
+                        <Button
+                            type="button"
+                            icon={<SvgIcon shape="download" width={20} height={20} />}
+                            onClick={onClickDownload}
+                        >
+                            다운로드
+                        </Button>
+                        <Button color="main" type="submit">
+                            자랑하기
+                        </Button>
+                    </DownButtonDiv>
                 </CanvasButtonsDiv>
                 <Canvas
                     text={{
@@ -202,6 +176,8 @@ const Main = () => {
                     setParentCanvas={setChildCanvas}
                     setParentCanvasCtx={setChildCanvasCtx}
                     setParentStateClear={clearState}
+                    isReset={isReset}
+                    setIsReset={() => setIsReset(false)}
                 />
 
                 <LeftInsideDiv>
@@ -249,100 +225,38 @@ const Main = () => {
                     <LabelText label="작품 명" name="title" value={title} onChange={onChangeInput} />
                 </LeftInsideDiv>
             </CanvasForm>
-            <ListDiv>
-                <ListTitle>✨ 짤 자랑 ✨</ListTitle>
-                {contentList
-                    .slice(
-                        currentPage === 1 ? 0 : (currentPage - 1) * perPage,
-                        currentPage === 1 ? perPage : (currentPage - 1) * perPage + perPage,
-                    )
-                    .map((content: IBoard) => {
-                        return (
-                            <ListItem
-                                key={content.docId}
-                                id={content.id}
-                                docId={content.docId}
-                                content={content.content}
-                                createAt={content.createAt}
-                                createUserId={content.createUserId}
-                                createUserEmail={content.createUserEmail}
-                                attatchmentUrl={content.attatchmentUrl}
-                            />
-                        );
-                    })}
-                <ListPaginig>
-                    <Pagination
-                        currentPage={currentPage}
-                        perPage={perPage}
-                        setCurrentPage={setCurrentPage}
-                        totalCount={contentCount}
-                    />
-                </ListPaginig>
-            </ListDiv>
-        </MainDiv>
+        </MainContainer>
     );
 };
 
-const MainDiv = styled.div`
-    display: flex;
-    justify-content: space-evenly;
-    width: 100%;
-
-    ${media.desktop} {
-        flex-direction: column;
-    }
+const MainContainer = styled.div`
+    flex-basis: 75%;
+    margin-top: 2em;
 `;
 const CanvasForm = styled.form`
     display: flex;
     flex-direction: column;
-    flex-basis: 50%;
-    min-width: 50%;
     align-items: center;
 `;
 
-const ListTitle = styled.h2`
-    display: flex;
-    flex-basis: 100%;
-    text-align: center;
-    justify-content: center;
-    height: 10%;
-    align-items: center;
-`;
-const ListDiv = styled.div`
-    display: flex;
-    justify-content: center;
-    flex-basis: 50%;
-    min-width: 50%;
-    flex-flow: wrap;
-    align-items: center;
-    padding-right: 1em;
-    box-sizing: border-box;
-    align-items: flex-start;
-    align-content: flex-start;
-`;
-
-const ListPaginig = styled.div`
-    display: flex;
-    flex-basis: 100%;
-    text-align: center;
-    justify-content: center;
-    height: 10%;
-    align-items: center;
-`;
 const LeftInsideDiv = styled.div`
     display: flex;
     align-items: center;
     width: 80%;
 `;
 
-const DownloadButton = styled(Button)``;
 const CanvasButtonsDiv = styled.div`
     display: flex;
     width: 80%;
-    flex-direction: row-reverse;
 
     button {
         margin: 0.5em;
     }
+`;
+const ResetButtonDiv = styled.div`
+    margin-right: auto;
+`;
+const DownButtonDiv = styled.div`
+    display: flex;
 `;
 export default Main;

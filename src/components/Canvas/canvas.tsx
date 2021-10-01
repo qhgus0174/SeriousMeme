@@ -1,4 +1,4 @@
-import React, { CanvasHTMLAttributes, useEffect, useRef, useState } from 'react';
+import React, { CanvasHTMLAttributes, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { media } from '~styles/device';
 import { css } from '@emotion/react';
@@ -11,9 +11,6 @@ interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
             day: string;
             dayOfWeek: string;
             time: string;
-            font?: string;
-            fontColor?: string;
-            fontSize?: string;
         };
         script: {
             name: string;
@@ -28,9 +25,6 @@ interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
                 };
                 bottom: string;
             };
-            font?: string;
-            fontColor?: string;
-            fontSize?: string;
         };
     };
     setDownloadUrl: (e: string) => void;
@@ -38,6 +32,8 @@ interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
     setParentCanvas: (e: HTMLCanvasElement | null) => void;
     setParentCanvasCtx: (e: CanvasRenderingContext2D | null | undefined) => void;
     setParentStateClear: () => void;
+    isReset: boolean;
+    setIsReset: (e: boolean) => void;
 }
 
 const Canvas = ({
@@ -47,36 +43,47 @@ const Canvas = ({
     setParentCanvas,
     setParentCanvasCtx,
     setParentStateClear,
+    isReset = false,
+    setIsReset,
 }: ICanvas) => {
     const maxWidth = 600;
     const maxHeight = 400;
+    const font = {
+        day: '20px Spoqa Han Sans Neo',
+        clock: '23px Spoqa Han Sans Neo',
+        name: '25px NanumMyeongjo',
+        job: '21px NanumMyeongjo',
+        script: '22px NanumMyeongjo',
+    };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [canvas, setCanvas] = useState<HTMLCanvasElement | null>();
     const [canvasCtx, setCanvasCtx] = useState<CanvasRenderingContext2D | null | undefined>();
 
-    const [attachment, setAttachment] = useState<string>('');
+    const [attachment, setAttachment] = useState<string>(blackImage);
 
     const imageInputRef = useRef<HTMLInputElement>(null);
-
     useEffect(() => {
         setCanvas(canvasRef.current);
         setCanvasCtx(canvasRef.current?.getContext('2d'));
         setParentCanvas(canvasRef.current);
         setParentCanvasCtx(canvasRef.current?.getContext('2d'));
+    }, [canvas, canvasCtx]);
 
-        if (!attachment) {
-            clearCanvas();
-            drawDefaultCanvas();
-            return;
-        }
-
+    useEffect(() => {
         initCanvas();
-    });
+    }, [text]);
+
+    useEffect(() => {
+        if (!isReset) return;
+        setIsReset(false);
+        resetCanvas();
+        setParentStateClear();
+        return;
+    }, [isReset]);
 
     const initCanvas = () => {
         if (!canvas || !canvasCtx) return;
-
         const bgImage = new Image();
         bgImage.src = attachment;
 
@@ -87,33 +94,27 @@ const Canvas = ({
         };
     };
 
-    const drawDefaultCanvas = () => {
+    const resetCanvas = () => {
         if (!canvas || !canvasCtx) return;
-        const bgImage = new Image();
-        bgImage.src = blackImage;
-
-        bgImage.onload = function () {
-            drawImage(bgImage);
-            drawText();
-            makeImageUrl();
-        };
+        setAttachment('');
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
     };
 
     const clearCanvas = () => {
         if (!canvas || !canvasCtx) return;
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.width);
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
         return;
     };
 
     const drawImage = (bgImage: HTMLImageElement) => {
-        if (!canvas || !canvasCtx) return;
+        if (!canvas || !canvasCtx || isReset) return;
 
         clearCanvas();
         canvasCtx.drawImage(bgImage, 0, 0, 600, 400);
     };
 
     const drawText = () => {
-        if (!canvas || !canvasCtx) return;
+        if (!canvas || !canvasCtx || isReset) return;
 
         canvasCtx.textAlign = 'center';
         canvasCtx.textBaseline = 'middle';
@@ -140,12 +141,10 @@ const Canvas = ({
         } = text;
 
         if (visible) {
-            canvasCtx.font = '20px Spoqa Han Sans Neo';
-            styleText(day, 47, 47);
-            styleText(`(${dayOfWeek})`, 77, 47);
+            styleText(day, 47, 47, font.day);
+            styleText(`(${dayOfWeek})`, 79, 47, font.day);
 
-            canvasCtx.font = '22px Spoqa Han Sans Neo';
-            styleText(time, 65, 74);
+            styleText(time, 65, 74, font.clock);
         }
     };
 
@@ -161,14 +160,12 @@ const Canvas = ({
 
         const canvasCenterAround = canvas.width / 2 + 10;
 
-        canvasCtx.font = '25px NanumMyeongjo';
-        styleText(name, calcSpace(canvasCenterAround, name, -1, 15.5), 280);
+        styleText(name, calcSpace(canvasCenterAround, name, -1, 15.5), 280, font.name);
 
         if (jobVisible) {
-            jobName && styleText('/', canvasCenterAround, 280);
+            jobName && styleText('/', canvasCenterAround, 280, font.name);
 
-            canvasCtx.font = '21px NanumMyeongjo';
-            styleText(jobName, calcSpace(canvasCenterAround, jobName, 1, 12.5), 280);
+            styleText(jobName, calcSpace(canvasCenterAround, jobName, 1, 12.5), 280, font.job);
         }
     };
 
@@ -182,13 +179,14 @@ const Canvas = ({
                 },
             },
         } = text;
-        canvasCtx.font = '22px NanumMyeongjo';
-        topText && styleText(`"${topText}"`, canvas.width / 2, 320, isQuestion);
-        bottomText && styleText(`"${bottomText}"`, canvas.width / 2, 355);
+        topText && styleText(`"${topText}"`, canvas.width / 2, 320, font.script, isQuestion);
+        bottomText && styleText(`"${bottomText}"`, canvas.width / 2, 355, font.script);
     };
 
-    const styleText = (text: string, x: number, y: number, color?: boolean) => {
+    const styleText = (text: string, x: number, y: number, font: string, color?: boolean) => {
         if (!canvas || !canvasCtx) return;
+
+        canvasCtx.font = font;
 
         canvasCtx.lineWidth = 5;
         canvasCtx.strokeStyle = '#000000';
@@ -264,10 +262,6 @@ const Canvas = ({
         </CanvasContainer>
     );
 };
-
-const NoticeDiv = styled.div`
-    position: absolute;
-`;
 
 const CanvasContainer = styled.div`
     width: 80%;

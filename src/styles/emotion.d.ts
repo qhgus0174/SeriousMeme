@@ -10,6 +10,7 @@ declare module '@emotion/react' {
             white: string;
             black: string;
             gray: string;
+            border: string;
         };
 
         buttonColors: {
