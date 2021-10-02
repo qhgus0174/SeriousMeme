@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { media } from '~styles/device';
 import { css } from '@emotion/react';
 import blackImage from '~assets/image/black.png';
+import WebFont from 'webfontloader';
 
 interface ICanvas extends CanvasHTMLAttributes<HTMLCanvasElement> {
     text: {
@@ -49,11 +50,11 @@ const Canvas = ({
     const maxWidth = 600;
     const maxHeight = 400;
     const font = {
-        day: '20px Spoqa Han Sans Neo',
-        clock: '23px Spoqa Han Sans Neo',
-        name: '25px NanumMyeongjo',
-        job: '21px NanumMyeongjo',
-        script: '22px NanumMyeongjo',
+        day: 'bold 20px Gothic A1',
+        clock: 'bold 23px Gothic A1',
+        name: '25px Nanum Myeongjo',
+        job: '21px Nanum Myeongjo',
+        script: '22px Nanum Myeongjo',
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -68,6 +69,12 @@ const Canvas = ({
         setCanvasCtx(canvasRef.current?.getContext('2d'));
         setParentCanvas(canvasRef.current);
         setParentCanvasCtx(canvasRef.current?.getContext('2d'));
+
+        WebFont.load({
+            google: {
+                families: ['Nanum Myeongjo', 'Gothic A1'],
+            },
+        });
     }, [canvas, canvasCtx]);
 
     useEffect(() => {
@@ -118,7 +125,6 @@ const Canvas = ({
 
         canvasCtx.textAlign = 'center';
         canvasCtx.textBaseline = 'middle';
-
         drawClockText();
         drawScriptText();
         drawSpeechText();

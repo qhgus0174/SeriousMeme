@@ -25,24 +25,3 @@
     src: url('SpoqaHanSansNeo-Bold.woff2') format('woff2'), url('SpoqaHanSansNeo-Bold.woff') format('woff'),
         url('SpoqaHanSansNeo-Bold.ttf') format('truetype');
 }
-
-@font-face {
-    font-family: 'NanumMyeongjo';
-    font-weight: 400;
-    src: url('NanumMyeongjo.woff2') format('woff2'), url('NanumMyeongjo.woff') format('woff'),
-        url('NanumMyeongjo.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: 'NanumMyeongjo';
-    font-weight: 500;
-    src: url('NanumMyeongjoBold.woff2') format('woff2'), url('NanumMyeongjoBold.woff') format('woff'),
-        url('NanumMyeongjoBold.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: 'NanumMyeongjo';
-    font-weight: 600;
-    src: url('NanumMyeongjoExtraBold.woff2') format('woff2'), url('NanumMyeongjoExtraBold.woff') format('woff'),
-        url('NanumMyeongjoExtraBold.ttf') format('truetype');
-}
