@@ -1,7 +1,7 @@
-import React, { CanvasHTMLAttributes, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { CanvasHTMLAttributes, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { media } from '~styles/device';
 import { css } from '@emotion/react';
+import { media } from '~styles/device';
 import blackImage from '~assets/image/black.png';
 import WebFont from 'webfontloader';
 

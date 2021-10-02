@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import AppRouter from 'Router';
-import { GlobalStyle } from '~styles/global-styles';
-import { basic } from '~styles/theme';
+import { ThemeProvider } from '@emotion/react';
 import AuthContext from '~context/AuthContext';
 import SpinnerContext from '~context/SpinnerContext';
+import { GlobalStyle } from '~styles/global-styles';
+import { basic } from '~styles/theme';
 import { Flip, ToastContainer } from 'react-toastify';
-import { ThemeProvider } from '@emotion/react';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {

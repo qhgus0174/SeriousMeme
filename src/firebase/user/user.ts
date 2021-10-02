@@ -23,8 +23,6 @@ export const userCollection = collection(db, 'user');
 
 const doc = (docId: IUser['docId']) => fsDoc(userCollection, docId);
 
-//const doc = (docId: IUser['docId']) => fsDoc(userCollection, docId);
-
 export const addUser = async (data: Omit<IUser, 'docId'>) =>
     await fsAddDoc(userCollection, Object.assign({}, data, { createAt: Date.now() }));
 

@@ -10,7 +10,8 @@
             "~firebase/*": ["firebase/*"],
             "~hooks/*": ["hooks/*"],
             "~styles/*": ["styles/*"],
-            "~utils/*": ["utils/*"]
+            "~utils/*": ["utils/*"],
+            "~routes/*": ["routes/*"]
         },
 
         "removeComments": true,

@@ -10,7 +10,7 @@ const Dialog = ({ children, options }: IModal) => {
     const { setSpinnerVisible } = useContext(SpinnerContext);
 
     return (
-        <DialogContainer>
+        <>
             <DialogBody>{children}</DialogBody>
             <DialogBottom>
                 <Button
@@ -26,26 +26,23 @@ const Dialog = ({ children, options }: IModal) => {
                 </Button>
                 <Button onClick={closeModal}>취소</Button>
             </DialogBottom>
-        </DialogContainer>
+        </>
     );
 };
 
-const DialogContainer = styled.div`
-    padding: 1.5em 0.5em 0 0.5em;
-    display: flex;
-    flex-direction: column;
-`;
 const DialogBody = styled.div`
-    padding: 1.5em 1.5em 2.5em 1.5em;
-    box-shadow: 0 4px 6px -6px rgb(0 0 0 / 0.3);
+    display: flex;
+    flex-basis: 50%;
+    justify-content: center;
+    align-items: center;
 `;
+
 const DialogBottom = styled.div`
     display: flex;
-    margin-left: auto;
-    padding-top: 1em;
+    justify-content: flex-end;
+    flex-basis: 20%;
     button {
-        margin-right: 0.5em;
-        box-sizing: border-box;
+        margin-right: 3.5%;
     }
 `;
 

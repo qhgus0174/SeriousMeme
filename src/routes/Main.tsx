@@ -1,30 +1,21 @@
 import React, { useContext, useState } from 'react';
+import styled from '@emotion/styled';
 import { AuthContext } from '~context/AuthContext';
 import { SpinnerContext } from '~context/SpinnerContext';
 import Button from '~components/Button/Button';
 import LabelText from '~components/Input/LabelText';
 import Canvas from '~components/Canvas/canvas';
-
-import { getDownloadURL } from '@firebase/storage';
-import { addDoc } from '~firebase/board/board';
-import { uploadByAttachmentUrlBoard } from '~firebase/storage/storage';
-
-import { useCheckbox } from '~hooks/useCheckbox';
-
-import { nowDateTime, nowDateToMillis, nowDay, nowDayOfWeek } from '~utils/luxon';
-import styled from '@emotion/styled';
 import Checkbox from '~components/Input/Checkbox';
 import SvgIcon from '~components/Icon/SvgIcon';
-import { toast } from 'react-toastify';
 import { media } from '~styles/device';
+import { useCheckbox } from '~hooks/useCheckbox';
+import { nowDateTime, nowDateToMillis, nowDay, nowDayOfWeek } from '~utils/luxon';
+import { addDoc } from '~firebase/board/board';
+import { uploadByAttachmentUrlBoard } from '~firebase/storage/storage';
+import { getDownloadURL } from '@firebase/storage';
+import { toast } from 'react-toastify';
 
 const Main = () => {
-    const {
-        state: { authUser },
-    } = useContext(AuthContext);
-
-    const { setSpinnerVisible } = useContext(SpinnerContext);
-
     interface IFormState {
         [key: string]: string;
     }
@@ -50,6 +41,12 @@ const Main = () => {
         speechTop: '',
         speechBottom: '',
     };
+
+    const {
+        state: { authUser },
+    } = useContext(AuthContext);
+
+    const { setSpinnerVisible } = useContext(SpinnerContext);
 
     const [{ day, dayOfWeek, time, title, name, job, speechTop, speechBottom }, setState] =
         useState<IFormState>(initialState);
@@ -84,7 +81,7 @@ const Main = () => {
 
         setSpinnerVisible(true);
         try {
-            let attatchmentUrl: string ="";
+            let attatchmentUrl: string = '';
             if (newAttachment) {
                 const res = await uploadByAttachmentUrlBoard(authUser ? authUser.uid : 'anonymous', newAttachment);
                 attatchmentUrl = await getDownloadURL(res.ref);
@@ -139,7 +136,7 @@ const Main = () => {
                     <ResetButtonDiv>
                         <Button
                             type="button"
-                            icon={<SvgIcon shape="reset" width={20} height={20} />}
+                            icon={<SvgIcon color="white" shape="reset" width={20} height={20} />}
                             onClick={() => setIsReset(true)}
                         />
                     </ResetButtonDiv>
@@ -151,7 +148,7 @@ const Main = () => {
                         >
                             다운로드
                         </Button>
-                        <Button color="main" type="submit">
+                        <Button icon={<SvgIcon shape="twinkle" width={20} height={20} />} color="main" type="submit">
                             자랑하기
                         </Button>
                     </DownButtonDiv>
@@ -232,6 +229,14 @@ const Main = () => {
 const MainContainer = styled.div`
     flex-basis: 75%;
     margin-top: 2em;
+
+    ${media.tablet} {
+        flex-basis: 85%;
+    }
+
+    ${media.phone} {
+        flex-basis: 100%;
+    }
 `;
 const CanvasForm = styled.form`
     display: flex;
@@ -255,8 +260,19 @@ const CanvasButtonsDiv = styled.div`
 `;
 const ResetButtonDiv = styled.div`
     margin-right: auto;
+    ${media.tablet} {
+        display: flex;
+    }
 `;
 const DownButtonDiv = styled.div`
     display: flex;
+    ${media.tablet} {
+        display: flex;
+    }
+    ${media.phone} {
+        span {
+            display: none;
+        }
+    }
 `;
 export default Main;

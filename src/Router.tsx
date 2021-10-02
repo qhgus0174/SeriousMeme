@@ -1,15 +1,15 @@
 import React, { useContext, useEffect } from 'react';
-import { AuthContext } from 'context/AuthContext';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Main from 'routes/Main';
-import List from 'routes/List';
-import Profile from 'routes/Profile';
-import Header from '~components/Layout/Header';
+import { BrowserRouter, Route } from 'react-router-dom';
+import PrivateRoute from 'PrivateRouter';
+import styled from '@emotion/styled';
+import { AuthContext } from '~context/AuthContext';
 import { SpinnerContext } from '~context/SpinnerContext';
 import ModalContext from '~context/ModalContext';
-import PrivateRoute from 'PrivateRouter';
 import Sidebar from '~components/Layout/Sidebar';
-import styled from '@emotion/styled';
+import { media } from '~styles/device';
+import Main from '~routes/Main';
+import List from '~routes/List';
+import Profile from '~routes/Profile';
 
 const AppRouter = () => {
     const {
@@ -42,6 +42,10 @@ const Container = styled.div`
     display: flex;
     width: 100%;
     height: 100%;
+
+    ${media.phone} {
+        margin-bottom: 20%;
+    }
 `;
 
 export default AppRouter;

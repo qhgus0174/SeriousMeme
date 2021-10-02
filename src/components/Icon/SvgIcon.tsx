@@ -1,4 +1,5 @@
 import React from 'react';
+import { Theme } from '@emotion/react';
 import { ReactComponent as GitHub } from '~assets/svg/github.svg';
 import { ReactComponent as GoogleLogo } from '~assets/svg/google.svg';
 import { ReactComponent as StarEmpty } from '~assets/svg/star-empty.svg';
@@ -6,6 +7,7 @@ import { ReactComponent as StarFill } from '~assets/svg/star-fill.svg';
 import { ReactComponent as Login } from '~assets/svg/login.svg';
 import { ReactComponent as Logout } from '~assets/svg/logout.svg';
 import { ReactComponent as Profile } from '~assets/svg/profile.svg';
+import { ReactComponent as MyProfile } from '~assets/svg/myProfile.svg';
 import { ReactComponent as Home } from '~assets/svg/home.svg';
 import { ReactComponent as Download } from '~assets/svg/download.svg';
 import { ReactComponent as DefaultUser } from '~assets/svg/defaultUser.svg';
@@ -15,7 +17,9 @@ import { ReactComponent as ArrowUp } from '~assets/svg/arrow-up.svg';
 import { ReactComponent as Edit } from '~assets/svg/edit.svg';
 import { ReactComponent as Reset } from '~assets/svg/reset.svg';
 import { ReactComponent as More } from '~assets/svg/more.svg';
-import { Theme } from '@emotion/react';
+import { ReactComponent as Draw } from '~assets/svg/draw.svg';
+import { ReactComponent as Images } from '~assets/svg/images.svg';
+import { ReactComponent as Twinkle } from '~assets/svg/twinkle.svg';
 
 interface ISvg {
     shape: IIconType;
@@ -40,7 +44,11 @@ type IIconType =
     | 'arrow-up'
     | 'edit'
     | 'reset'
-    | 'more';
+    | 'more'
+    | 'draw'
+    | 'images'
+    | 'myprofile'
+    | 'twinkle';
 
 const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
     const icon = () => {
@@ -77,6 +85,14 @@ const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
                 return <Reset fill={color} width={width} height={height} />;
             case 'more':
                 return <More fill={color} width={width} height={height} />;
+            case 'draw':
+                return <Draw fill={color} width={width} height={height} />;
+            case 'images':
+                return <Images fill={color} width={width} height={height} />;
+            case 'myprofile':
+                return <MyProfile fill={color} width={width} height={height} />;
+            case 'twinkle':
+                return <Twinkle fill={color} width={width} height={height} />;
             default:
                 return <></>;
         }

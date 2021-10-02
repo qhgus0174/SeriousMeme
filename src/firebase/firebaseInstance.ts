@@ -1,9 +1,8 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth'; //Auth 사용
+import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -18,4 +17,5 @@ const app = initializeApp(firebaseConfig); //firebase initialize
 export const auth = getAuth();
 //database init
 export const db = getFirestore();
+//storage init
 export const storage = getStorage();

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import PuffLoader from 'react-spinners/PuffLoader';

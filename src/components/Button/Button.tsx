@@ -30,6 +30,7 @@ const BasicButton = styled.button<IButtonProps>`
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
     svg,
     img {
         align-items: center;

@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from '@emotion/styled';
-import { media } from '~styles/device';
-import { IModalOption } from '~hooks/useModal';
 import { IModal } from '~components/Modal/ModalPortal';
 
 const BasicModal = ({ children, options }: IModal) => {

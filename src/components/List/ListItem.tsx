@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { deleteDoc, IBoard, updateDoc } from '~firebase/board/board';
-import { AuthContext } from '~context/AuthContext';
-import { deleteAttachmentByUrl } from '~firebase/storage/storage';
-import { ModalActionContext } from '~context/ModalContext';
 import styled from '@emotion/styled';
-import { getUserInfo, IUser } from '~firebase/user/user';
-import { QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
-import SvgIcon from '~components/Icon/SvgIcon';
+import { AuthContext } from '~context/AuthContext';
+import { ModalActionContext } from '~context/ModalContext';
 import { SpinnerContext } from '~context/SpinnerContext';
-import { toast } from 'react-toastify';
+import SvgIcon from '~components/Icon/SvgIcon';
 import TextBox from '~components/Input/TextBox';
-import { useInput } from '~hooks/useInput';
 import Button from '~components/Button/Button';
 import { nowDateToMillis } from '~utils/luxon';
+import { useInput } from '~hooks/useInput';
+import { media } from '~styles/device';
+import { deleteDoc, IBoard, updateDoc } from '~firebase/board/board';
+import { deleteAttachmentByUrl } from '~firebase/storage/storage';
+import { getUserInfo, IUser } from '~firebase/user/user';
+import { QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 interface IListitem extends IBoard {
     flexBasis?: number;
@@ -65,8 +66,6 @@ const ListItem = (items: IListitem) => {
                 type: 'dialog',
                 content: <>데이터를 삭제하시겠습니까?</>,
                 options: {
-                    width: '25',
-                    height: '26',
                     confirmFn: async () => {
                         await deleteDoc(items.docId);
                         if (items.attatchmentUrl) await deleteAttachmentByUrl(items.attatchmentUrl);
@@ -183,6 +182,16 @@ const ListContainer = styled.div<Pick<IListitem, 'flexBasis'>>`
     justify-content: center;
     flex-direction: column;
     padding: 1.2em;
+
+    ${media.tablet} {
+        flex-basis: 50%;
+        min-width: 50%;
+    }
+
+    ${media.phone} {
+        flex-basis: 100%;
+        min-width: 100%;
+    }
 `;
 const ImageContainer = styled.div`
     box-sizing: border-box;

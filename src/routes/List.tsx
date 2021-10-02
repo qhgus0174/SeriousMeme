@@ -1,14 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 import { SpinnerContext } from '~context/SpinnerContext';
 import ListItem from '~components/List/ListItem';
-
-import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
-import { IBoard, queryBoardCollection } from '~firebase/board/board';
-
-import styled from '@emotion/styled';
-import { toast } from 'react-toastify';
-import { media } from '~styles/device';
 import Pagination from '~components/Pagination/Pagination';
+import { media } from '~styles/device';
+import { IBoard, queryBoardCollection } from '~firebase/board/board';
+import { DocumentData, onSnapshot, QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 
 const List = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -87,6 +85,13 @@ const MainDiv = styled.div`
     flex-basis: 75%;
     margin-top: 1em;
     margin-bottom: 2em;
+
+    ${media.tablet} {
+        flex-basis: 85%;
+    }
+    ${media.phone} {
+        flex-basis: 100%;
+    }
 `;
 
 const ListTitle = styled.h2`
@@ -102,11 +107,8 @@ const ListTitle = styled.h2`
 const ListDiv = styled.div`
     display: flex;
     justify-content: center;
-    flex-basis: 50%;
-    min-width: 50%;
     flex-flow: wrap;
     align-items: center;
-    padding-right: 1em;
     box-sizing: border-box;
     align-items: flex-start;
     align-content: flex-start;

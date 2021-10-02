@@ -1,5 +1,5 @@
-import { updateProfile as fbUpdateProfile, User } from 'firebase/auth';
 import React from 'react';
+import { updateProfile as fbUpdateProfile, User } from 'firebase/auth';
 
 interface IUserProfile {
     displayName?: string | null;

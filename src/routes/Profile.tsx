@@ -1,26 +1,31 @@
-import { updateProfile } from '~firebase/user/profile';
-import { QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useHistory } from 'react-router';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
+import { AuthContext } from '~context/AuthContext';
+import { SpinnerContext } from '~context/SpinnerContext';
 import Button from '~components/Button/Button';
 import TextBox from '~components/Input/TextBox';
 import ListItem from '~components/List/ListItem';
-import { AuthContext } from '~context/AuthContext';
+import SvgIcon from '~components/Icon/SvgIcon';
+import Pagination from '~components/Pagination/Pagination';
+import { useInput } from '~hooks/useInput';
+import { media } from '~styles/device';
+import { updateProfile } from '~firebase/user/profile';
 import { getMyDocs, IBoard } from '~firebase/board/board';
-import { SpinnerContext } from '~context/SpinnerContext';
 import { uploadByAttachmentUrlProfile } from '~firebase/storage/storage';
 import { getDownloadURL } from 'firebase/storage';
-import SvgIcon from '~components/Icon/SvgIcon';
-import { useInput } from '~hooks/useInput';
-import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import Pagination from '~components/Pagination/Pagination';
 import { updateUserInfo } from '~firebase/user/user';
+import { auth } from '~firebase/firebaseInstance';
+import { QueryDocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
+import { toast } from 'react-toastify';
 
 const Profile = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
+    const history = useHistory();
     const [contentList, setContentList] = useState<IBoard[]>([]);
     const [newPhotoUrl, setNewPhotoUrl] = useState<string | null>(authUser!.photoURL);
     const [isFold, setIsFold] = useState<boolean>(false);
@@ -105,6 +110,19 @@ const Profile = () => {
         };
     };
 
+    const logOut = async () => {
+        setSpinnerVisible(true);
+        try {
+            await signOut(auth);
+            history.push('/');
+            toast.info('로그아웃 되었습니다.');
+        } catch (error) {
+            toast.error('로그아웃 중 오류가 발생했습니다.');
+        } finally {
+            setSpinnerVisible(false);
+        }
+    };
+
     return (
         <ProfileContainter>
             <ProfileFormContainer onSubmit={onSubmit}>
@@ -124,8 +142,21 @@ const Profile = () => {
                         onChange={onChangeFile}
                     />
                 </PhotoDiv>
-                <TextBox width="10" {...bindNewDisplayName} />
-                <Button>프로필 변경</Button>
+                <InfoDiv>
+                    <InfoInnerDiv>
+                        <TextBox {...bindNewDisplayName} />
+                        <Button type="submit">프로필 변경</Button>
+                    </InfoInnerDiv>
+                    <LogoutDiv>
+                        <Button
+                            type="button"
+                            icon={<SvgIcon color="white" shape="logout" width={20} height={20} />}
+                            onClick={() => logOut()}
+                        >
+                            로그아웃
+                        </Button>
+                    </LogoutDiv>
+                </InfoDiv>
             </ProfileFormContainer>
             <ListTitle>
                 <FoldDiv onClick={() => setIsFold(!isFold)}>
@@ -172,6 +203,13 @@ const ProfileContainter = styled.div`
     flex-basis: 75%;
     margin-top: 1em;
     margin-bottom: 1em;
+
+    ${media.tablet} {
+        flex-basis: 85%;
+    }
+    ${media.phone} {
+        flex-basis: 100%;
+    }
 `;
 const FoldDiv = styled.div`
     cursor: pointer;
@@ -180,10 +218,31 @@ const FoldDiv = styled.div`
     }
 `;
 
+const LogoutDiv = styled.div`
+    display: none;
+    ${media.phone} {
+        display: flex;
+        width: 100%;
+
+        button {
+            margin-top: 1em;
+            width: 100%;
+        }
+    }
+`;
+
 const ProfileFormContainer = styled.form`
+    margin-top: 1em;
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    ${media.phone} {
+        flex-basis: 100%;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
 `;
 
 const PhotoDiv = styled.div`
@@ -192,6 +251,17 @@ const PhotoDiv = styled.div`
     svg {
         border-radius: 50%;
     }
+`;
+
+const InfoDiv = styled.div`
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin-right: 1em;
+`;
+const InfoInnerDiv = styled.div`
+    display: flex;
+    flex-direction: row;
 `;
 
 const ListDiv = styled.div`

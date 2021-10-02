@@ -1,24 +1,23 @@
 import React, { useContext, useState } from 'react';
+import { useHistory } from 'react-router';
 import styled from '@emotion/styled';
+import { SpinnerContext } from '~context/SpinnerContext';
 import TextBox from '~components/Input/TextBox';
 import Button from '~components/Button/Button';
 import SvgIcon from '~components/Icon/SvgIcon';
 import Tab from '~components/Tab/Tab';
+import { useInput } from '~hooks/useInput';
 import { auth } from '~firebase/firebaseInstance';
+import { addUser, getUserDocId } from '~firebase/user/user';
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     GoogleAuthProvider,
     GithubAuthProvider,
-    signInWithRedirect,
     UserCredential,
     signInWithPopup,
 } from 'firebase/auth';
 import { toast } from 'react-toastify';
-import { SpinnerContext } from '~context/SpinnerContext';
-import { useHistory } from 'react-router';
-import { useInput } from '~hooks/useInput';
-import { addUser, getUserDocId, IUser } from '~firebase/user/user';
 
 const Login = () => {
     const [newAccount, setNewAccount] = useState<boolean>(false);

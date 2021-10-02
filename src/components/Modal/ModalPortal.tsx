@@ -1,11 +1,11 @@
 import React, { useContext, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 import { ModalActionContext, ModalStateContext } from '~context/ModalContext';
 import BasicModal from '~components/Modal/Theme/BasicModal';
 import Dialog from '~components/Modal/Theme/Dialog';
 import { IModalOption, IModalProps } from '~hooks/useModal';
-import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 import { media } from '~styles/device';
 
 export interface IModal {
@@ -82,25 +82,35 @@ const ModalInner = styled.div<Pick<IModalOption, 'width' | 'height'> & Pick<IMod
                     max-width: ${props.width ? props.width : '60'}vw;
                     height: ${props.height ? props.height : '60'}vh;
 
-                    //1024px 보다 작으면
                     ${media.desktop} {
                         max-width: ${Number(props.width ? props.width : '60') * 1.4}vw;
                     }
 
-                    //768px 보다 작으면
                     ${media.tablet} {
                         max-width: ${Number(props.width ? props.width : '60') * 1.8}vw;
                     }
 
-                    //480px 보다 작으면
                     ${media.phone} {
                         max-width: 80vw;
                     }
                 `;
             case 'dialog':
                 return css`
-                    max-width: ${props.width ? props.width : '30'}vw;
-                    height: ${props.height ? props.height : '30'}vh;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    max-width: 33vw;
+                    height: 30vh;
+
+                    ${media.tablet} {
+                        max-width: 60vw;
+                        height: 30vh;
+                    }
+
+                    ${media.phone} {
+                        max-width: 70vw;
+                        height: 30vh;
+                    }
                 `;
         }
     }}
