@@ -1,5 +1,5 @@
 import React from 'react';
-import { Theme } from '@emotion/react';
+import { Theme, useTheme } from '@emotion/react';
 import { ReactComponent as GitHub } from '~assets/svg/github.svg';
 import { ReactComponent as GoogleLogo } from '~assets/svg/google.svg';
 import { ReactComponent as StarEmpty } from '~assets/svg/star-empty.svg';
@@ -51,48 +51,51 @@ type IIconType =
     | 'twinkle';
 
 const Svg = ({ shape, color = 'black', width = 38, height = 38 }: ISvg) => {
+    const theme = useTheme();
+    const iconColor = theme.colors[color];
+
     const icon = () => {
         switch (shape) {
             case 'github':
-                return <GitHub fill={color} width={width} height={height} />;
+                return <GitHub fill={iconColor} width={width} height={height} />;
             case 'googleLogo':
-                return <GoogleLogo fill={color} width={width} height={height} />;
+                return <GoogleLogo fill={iconColor} width={width} height={height} />;
             case 'star-empty':
-                return <StarEmpty fill={color} width={width} height={height} />;
+                return <StarEmpty fill={iconColor} width={width} height={height} />;
             case 'star-fill':
-                return <StarFill fill={color} width={width} height={height} />;
+                return <StarFill fill={iconColor} width={width} height={height} />;
             case 'login':
-                return <Login fill={color} width={width} height={height} />;
+                return <Login fill={iconColor} width={width} height={height} />;
             case 'logout':
-                return <Logout fill={color} width={width} height={height} />;
+                return <Logout fill={iconColor} width={width} height={height} />;
             case 'profile':
-                return <Profile fill={color} width={width} height={height} />;
+                return <Profile fill={iconColor} width={width} height={height} />;
             case 'home':
-                return <Home fill={color} width={width} height={height} />;
+                return <Home fill={iconColor} width={width} height={height} />;
             case 'download':
-                return <Download fill={color} width={width} height={height} />;
+                return <Download fill={iconColor} width={width} height={height} />;
             case 'defaultUser':
-                return <DefaultUser fill={color} width={width} height={height} />;
+                return <DefaultUser fill={iconColor} width={width} height={height} />;
             case 'trash':
-                return <Trash fill={color} width={width} height={height} />;
+                return <Trash fill={iconColor} width={width} height={height} />;
             case 'arrow-down':
-                return <ArrowDown fill={color} width={width} height={height} />;
+                return <ArrowDown fill={iconColor} width={width} height={height} />;
             case 'arrow-up':
-                return <ArrowUp fill={color} width={width} height={height} />;
+                return <ArrowUp fill={iconColor} width={width} height={height} />;
             case 'edit':
-                return <Edit fill={color} width={width} height={height} />;
+                return <Edit fill={iconColor} width={width} height={height} />;
             case 'reset':
-                return <Reset fill={color} width={width} height={height} />;
+                return <Reset fill={iconColor} width={width} height={height} />;
             case 'more':
-                return <More fill={color} width={width} height={height} />;
+                return <More fill={iconColor} width={width} height={height} />;
             case 'draw':
-                return <Draw fill={color} width={width} height={height} />;
+                return <Draw fill={iconColor} width={width} height={height} />;
             case 'images':
-                return <Images fill={color} width={width} height={height} />;
+                return <Images fill={iconColor} width={width} height={height} />;
             case 'myprofile':
-                return <MyProfile fill={color} width={width} height={height} />;
+                return <MyProfile fill={iconColor} width={width} height={height} />;
             case 'twinkle':
-                return <Twinkle fill={color} width={width} height={height} />;
+                return <Twinkle fill={iconColor} width={width} height={height} />;
             default:
                 return <></>;
         }
