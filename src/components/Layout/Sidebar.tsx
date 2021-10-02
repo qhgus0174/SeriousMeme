@@ -51,7 +51,7 @@ const Sidebar = () => {
                     <MenuContainer>
                         <MenuDiv>
                             <HomeLink to="/">
-                                <SvgIcon shape="home" />
+                                <SvgIcon shape="home" width={30} height={30} color="main" />
                                 <h3>인간극장 짤 생성기</h3>
                             </HomeLink>
                             <MenuItem active={pathName == '/' ? 1 : 0}>
@@ -351,7 +351,7 @@ const HomeLink = styled(Link)`
     display: flex;
     align-items: center;
     h3 {
-        padding-left: 0.5em;
+        padding-left: 0.7em;
     }
     &:focus,
     &:hover,

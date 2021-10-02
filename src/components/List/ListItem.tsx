@@ -183,12 +183,21 @@ const ListContainer = styled.div<Pick<IListitem, 'flexBasis'>>`
     flex-direction: column;
     padding: 1.2em;
 
-    ${media.tablet} {
+    ${media.desktop} {
         flex-basis: 50%;
         min-width: 50%;
     }
 
+    ${media.tablet} {
+        padding-right: 2em;
+        padding-left: 2em;
+        flex-basis: 100%;
+        min-width: 100%;
+    }
+
     ${media.phone} {
+        padding-right: 2em;
+        padding-left: 2em;
         flex-basis: 100%;
         min-width: 100%;
     }

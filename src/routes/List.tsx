@@ -112,6 +112,9 @@ const ListDiv = styled.div`
     box-sizing: border-box;
     align-items: flex-start;
     align-content: flex-start;
+
+    margin-right: 1em;
+    margin-left: 1em;
 `;
 
 const ListPaginig = styled.div`
