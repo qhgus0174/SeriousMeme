@@ -21,7 +21,7 @@ export interface IBoard {
     createUserId: string;
     createUserEmail?: string | null;
     createAt?: number;
-    attatchmentUrl?: string | null;
+    attatchmentUrl: string;
 }
 
 //게시물 - board collection

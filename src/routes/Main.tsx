@@ -84,7 +84,7 @@ const Main = () => {
 
         setSpinnerVisible(true);
         try {
-            let attatchmentUrl: string | null = null;
+            let attatchmentUrl: string ="";
             if (newAttachment) {
                 const res = await uploadByAttachmentUrlBoard(authUser ? authUser.uid : 'anonymous', newAttachment);
                 attatchmentUrl = await getDownloadURL(res.ref);

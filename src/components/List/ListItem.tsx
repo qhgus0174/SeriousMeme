@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import TextBox from '~components/Input/TextBox';
 import { useInput } from '~hooks/useInput';
 import Button from '~components/Button/Button';
+import { nowDateToMillis } from '~utils/luxon';
 
 interface IListitem extends IBoard {
     flexBasis?: number;
@@ -93,10 +94,38 @@ const ListItem = (items: IListitem) => {
         }
     };
 
+    const onClickDownload = () => {
+        setSpinnerVisible(true);
+
+        toast.info('짤을 다운로드 합니다.');
+        const url = items.attatchmentUrl;
+        const filename = `${nowDateToMillis}.png`;
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = function () {
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(xhr.response);
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+        };
+        xhr.open('GET', url);
+        xhr.send();
+
+        setSpinnerVisible(false);
+    };
     return (
         <ListContainer flexBasis={items.flexBasis}>
             <WhiteBackground>
                 <ImageContainer>{items.attatchmentUrl && <img src={items.attatchmentUrl} />}</ImageContainer>
+                <ImageDownloadButton
+                    icon={<SvgIcon shape="download" width={20} height={20} />}
+                    color="main"
+                    onClick={() => onClickDownload()}
+                >
+                    다운로드
+                </ImageDownloadButton>
                 <UserInfoContainer>
                     <UserTextDiv>
                         {isEdit ? (
@@ -217,5 +246,9 @@ const EditBox = styled(TextBox)`
 const ContentButtonContainer = styled.div`
     display: flex;
     flex-direction: column;
+`;
+
+const ImageDownloadButton = styled(Button)`
+    justify-content: center;
 `;
 export default ListItem;
