@@ -12,10 +12,10 @@ const List = () => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [perPage, setPerPage] = useState<number>(6);
 
-    const { setSpinnerVisible } = useContext(SpinnerContext);
-
     const [contentList, setContentList] = useState<IBoard[]>([]);
     const [contentCount, setContentCount] = useState<number>(0);
+
+    const { setSpinnerVisible } = useContext(SpinnerContext);
 
     useEffect(() => {
         getList();
@@ -25,7 +25,8 @@ const List = () => {
         try {
             setContentList([]);
             setSpinnerVisible(true);
-            const getContent = onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
+
+            onSnapshot(queryBoardCollection, (snapshot: QuerySnapshot<DocumentData>) => {
                 const snapshotDocs = snapshot.docs as Array<QueryDocumentSnapshot<IBoard>>;
 
                 const postList = snapshotDocs.map((doc: QueryDocumentSnapshot<IBoard>) => {

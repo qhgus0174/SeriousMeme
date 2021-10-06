@@ -25,19 +25,20 @@ const Profile = () => {
     const {
         state: { authUser },
     } = useContext(AuthContext);
+
     const history = useHistory();
+
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [perPage, setPerPage] = useState<number>(6);
+    const [contentCount, setContentCount] = useState<number>(0);
+
     const [contentList, setContentList] = useState<IBoard[]>([]);
     const [newPhotoUrl, setNewPhotoUrl] = useState<string | null>(authUser!.photoURL);
     const [isFold, setIsFold] = useState<boolean>(false);
 
     const [newDisplayName, bindNewDisplayName] = useInput<string | null>(authUser!.displayName);
     const { setSpinnerVisible } = useContext(SpinnerContext);
-
     const imageInputRef = useRef<HTMLInputElement>(null);
-
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(6);
-    const [contentCount, setContentCount] = useState<number>(0);
 
     useEffect(() => {
         setContentList([]);
@@ -61,20 +62,17 @@ const Profile = () => {
         try {
             setSpinnerVisible(true);
 
-            let photoUrl: string | null = null;
-
             if (newPhotoUrl) {
                 if (newPhotoUrl != authUser!.photoURL) {
-                    const res = await uploadByAttachmentUrlProfile(authUser ? authUser.uid : 'anonymous', newPhotoUrl);
-                    photoUrl = await getDownloadURL(res.ref);
+                    const photoUrl = await getFileUrl();
                     updateUserProfile(photoUrl);
-                    updateUserInfos(photoUrl);
                 } else {
                     updateUserProfile(newPhotoUrl);
-                    updateUserInfos(newPhotoUrl);
                 }
             }
+
             toast.success('프로필이 변경되었습니다.');
+
             setContentList([]);
             getList();
         } catch (err: unknown) {
@@ -85,10 +83,18 @@ const Profile = () => {
         }
     };
 
+    const getFileUrl = async (): Promise<string> => {
+        if (newPhotoUrl) {
+            const res = await uploadByAttachmentUrlProfile(authUser ? authUser.uid : 'anonymous', newPhotoUrl);
+            const downloadUrl = await getDownloadURL(res.ref);
+            return downloadUrl;
+        } else {
+            return '';
+        }
+    };
+
     const updateUserProfile = async (photoUrl: string) => {
         await updateProfile(authUser!, { displayName: newDisplayName, photoURL: photoUrl });
-    };
-    const updateUserInfos = async (photoUrl: string) => {
         await updateUserInfo(authUser!.uid, { name: newDisplayName, photoUrl: photoUrl });
     };
 

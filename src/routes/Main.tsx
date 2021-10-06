@@ -61,30 +61,14 @@ const Main = () => {
     const [childCanvas, setChildCanvas] = useState<HTMLCanvasElement | null>(null);
     const [childCanvasCtx, setChildCanvasCtx] = useState<CanvasRenderingContext2D | null | undefined>(null);
 
-    const isCanvasBlank = () => {
-        if (!childCanvas || !childCanvasCtx) return;
-
-        const pixelBuffer = new Uint32Array(
-            childCanvasCtx.getImageData(0, 0, childCanvas.width, childCanvas.height).data.buffer,
-        );
-
-        return !pixelBuffer.some(color => color !== 0);
-    };
-
     const addPost = async (event: React.FormEvent) => {
         event.preventDefault();
-
-        if (isCanvasBlank()) {
-            toast.error('짤을 먼저 만들어주세요.');
-            return;
-        }
-
+        validate();
         setSpinnerVisible(true);
         try {
             let attatchmentUrl: string = '';
             if (newAttachment) {
-                const res = await uploadByAttachmentUrlBoard(authUser ? authUser.uid : 'anonymous', newAttachment);
-                attatchmentUrl = await getDownloadURL(res.ref);
+                attatchmentUrl = await uploadPostFile();
             }
             await addDoc({
                 content: title,
@@ -102,6 +86,12 @@ const Main = () => {
         }
     };
 
+    const uploadPostFile = async (): Promise<string> => {
+        const res = await uploadByAttachmentUrlBoard(authUser ? authUser.uid : 'anonymous', newAttachment);
+        const downloadUrl = await getDownloadURL(res.ref);
+        return downloadUrl;
+    };
+
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {
             target: { name, value },
@@ -114,10 +104,7 @@ const Main = () => {
     };
 
     const onClickDownload = () => {
-        if (isCanvasBlank()) {
-            toast.error('짤을 먼저 만들어주세요.');
-            return;
-        }
+        validate();
         toast.info('짤을 다운로드 합니다.');
         setSpinnerVisible(true);
         var a = document.createElement('a');
@@ -127,6 +114,23 @@ const Main = () => {
         a.click();
         document.body.removeChild(a);
         setSpinnerVisible(false);
+    };
+
+    const validate = () => {
+        if (isCanvasBlank()) {
+            toast.error('짤을 먼저 만들어주세요.');
+            return;
+        }
+    };
+
+    const isCanvasBlank = () => {
+        if (!childCanvas || !childCanvasCtx) return;
+
+        const pixelBuffer = new Uint32Array(
+            childCanvasCtx.getImageData(0, 0, childCanvas.width, childCanvas.height).data.buffer,
+        );
+
+        return !pixelBuffer.some(color => color !== 0);
     };
 
     return (
