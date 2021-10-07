@@ -172,6 +172,7 @@ const SidebarContainer = styled.div`
 
     ${media.phone} {
         flex-basis: 0%;
+        border-right: none;
     }
 `;
 
@@ -188,6 +189,9 @@ const SidebarFooter = styled.div`
         background: ${props => props.theme.colors.main};
         align-items: center;
         justify-content: space-around;
+        img {
+            border-radius: 50%;
+        }
     }
 `;
 
