@@ -202,7 +202,7 @@ const Profile = () => {
         </ProfileContainter>
     );
 };
-interface iii {
+interface IMyBoard {
     isFold: boolean;
 }
 const ProfileContainter = styled.div`
@@ -272,7 +272,7 @@ const InfoInnerDiv = styled.div`
 
 const ListDiv = styled.div`
     display: flex;
-    ${(props: iii) => (props.isFold ? 'opacity: 0;' : 'opacity: 1;')}
+    ${(props: IMyBoard) => (props.isFold ? 'opacity: 0;' : 'opacity: 1;')}
     justify-content: center;
     flex-flow: wrap;
     align-items: center;
