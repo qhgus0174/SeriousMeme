@@ -20,17 +20,17 @@
 
 - 우측상단 버튼을 이용해 캔버스를 초기화합니다.
  
-![메인](https://user-images.githubusercontent.com/74941162/143013185-296dbc66-261a-42db-a86e-3e38ed1657bc.PNG)
+  ![메인](https://user-images.githubusercontent.com/74941162/143013185-296dbc66-261a-42db-a86e-3e38ed1657bc.PNG)
 
 
 - 자랑하기
 
-![자랑](https://user-images.githubusercontent.com/74941162/143013316-a646b29c-bb36-46f9-afe1-dd49d733a194.PNG)
+  ![자랑](https://user-images.githubusercontent.com/74941162/143013316-a646b29c-bb36-46f9-afe1-dd49d733a194.PNG)
 
 
 - 로그인 후 프로필
 
-![로그인시](https://user-images.githubusercontent.com/74941162/143013637-7e0ffdc3-b033-49aa-ba31-370bd9842ea5.PNG)
+  ![로그인시](https://user-images.githubusercontent.com/74941162/143013637-7e0ffdc3-b033-49aa-ba31-370bd9842ea5.PNG)
 
 <br />
 
